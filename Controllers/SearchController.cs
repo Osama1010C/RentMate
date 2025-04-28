@@ -15,24 +15,30 @@ namespace RentMateAPI.Controllers
             this._searchService = searchService;
         }
 
-        
-
-        [HttpGet("Price")]
-        public async Task<IActionResult> GetAllPropertiesByPrice(decimal fromPrice, decimal toPrice)
+        [HttpGet]
+        public async Task<IActionResult> GetAllProperties(string? location = null, decimal? fromPrice = null, decimal? toPrice = null)
         {
-            var properties = await _searchService.SearchByPriceAsync(fromPrice, toPrice);
+            var properties = await _searchService.SearchAsync(location,fromPrice, toPrice);
 
             return Ok(properties);
         }
 
+        //[HttpGet("Price")]
+        //public async Task<IActionResult> GetAllPropertiesByPrice(decimal fromPrice, decimal toPrice)
+        //{
+        //    var properties = await _searchService.SearchByPriceAsync(fromPrice, toPrice);
+
+        //    return Ok(properties);
+        //}
+
         
 
-        [HttpGet("Location/{location}")]
-        public async Task<IActionResult> GetAllPropertiesByLocation(string location)
-        {
-            var properties = await _searchService.SearchByLocationAsync(location);
+        //[HttpGet("Location/{location}")]
+        //public async Task<IActionResult> GetAllPropertiesByLocation(string location)
+        //{
+        //    var properties = await _searchService.SearchByLocationAsync(location);
 
-            return Ok(properties);
-        }
+        //    return Ok(properties);
+        //}
     }
 }

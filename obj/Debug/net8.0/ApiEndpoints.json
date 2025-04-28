@@ -464,8 +464,8 @@
   },
   {
     "ContainingType": "RentMateAPI.Controllers.SearchController",
-    "Method": "GetAllPropertiesByLocation",
-    "RelativePath": "RentMate/Search/Location/{location}",
+    "Method": "GetAllProperties",
+    "RelativePath": "RentMate/Search",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -473,27 +473,16 @@
       {
         "Name": "location",
         "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "RentMateAPI.Controllers.SearchController",
-    "Method": "GetAllPropertiesByPrice",
-    "RelativePath": "RentMate/Search/Price",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
+        "IsRequired": false
+      },
       {
         "Name": "fromPrice",
-        "Type": "System.Decimal",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
         "Name": "toPrice",
-        "Type": "System.Decimal",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],

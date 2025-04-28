@@ -716,12 +716,19 @@
         }
       }
     },
-    "/RentMate/Search/Price": {
+    "/RentMate/Search": {
       "get": {
         "tags": [
           "Search"
         ],
         "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "fromPrice",
             "in": "query",
@@ -736,28 +743,6 @@
             "schema": {
               "type": "number",
               "format": "double"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/RentMate/Search/Location/{location}": {
-      "get": {
-        "tags": [
-          "Search"
-        ],
-        "parameters": [
-          {
-            "name": "location",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
             }
           }
         ],

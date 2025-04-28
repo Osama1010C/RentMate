@@ -25,7 +25,7 @@ namespace RentMateAPI.Services.Implementations
             var propertyDtos = properties.Select(property => new AllPropertyDto
             {
                 Id = property.Id,
-                //LandlordId = property.LandlordId,
+                LandlordId = property.LandlordId,
                 //LandlordName = property.Landlord!.Name,
                 Title = property.Title,
                 //Description = property.Description,
@@ -46,7 +46,7 @@ namespace RentMateAPI.Services.Implementations
             if(await _unitOfWork.Users.GetByIdAsync(userId) == null) 
                 throw new Exception($"User with Id {userId} not found!");
 
-            var property = await _unitOfWork.Properties.GetAsync(p => p.Id == propertyId && p.PropertyApproval == "accepted", includeProperties:"Landlord");
+            var property = await _unitOfWork.Properties.GetAsync(p => p.Id == propertyId , includeProperties:"Landlord");
             if (property is null) 
                 throw new Exception($"Property with Id {propertyId} not exist!");
 

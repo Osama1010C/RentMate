@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        //public int? LandlordId { get; set; }
+        public int? LandlordId { get; set; }
 
         //public string LandlordName { get; set; } = null!;
 
