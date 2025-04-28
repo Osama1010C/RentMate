@@ -4,6 +4,7 @@ using RentMateAPI.DTOModels.DTOImage;
 using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using Property = RentMateAPI.Data.Models.Property;
 
 namespace RentMateAPI.Services.Implementations
 {
@@ -115,63 +116,128 @@ namespace RentMateAPI.Services.Implementations
             return propertyDtos;
         }
 
-        public async Task AddAsync(AddPropertyDto propertyDto)
+        //public async Task<int> AddAsync(AddPropertyDto propertyDto)
+        //{
+        //    if(await _unitOfWork.Users.GetByIdAsync(propertyDto.LandlordId) is null)
+        //        throw new Exception($"Landlord with Id {propertyDto.LandlordId} not found!");
+
+        //    byte[]? propertyImage = null;
+
+        //    // read main image
+        //    using (var memoryStream = new MemoryStream())
+        //    {
+        //        propertyDto.MainImage.CopyTo(memoryStream);
+        //        propertyImage = memoryStream.ToArray();
+
+        //    }
+
+        //    var property = new Property
+        //    {
+        //        LandlordId = propertyDto.LandlordId,
+        //        Title = propertyDto.Title,
+        //        Description = propertyDto.Description,
+        //        Location = propertyDto.Location,
+        //        Price = propertyDto.Price,
+        //        MainImage = propertyImage,
+        //        Views = 0,
+        //        Status = "available",
+        //        PropertyApproval = "pending"
+        //    };
+        //    await _unitOfWork.Properties.AddAsync(property);
+
+        //    await _unitOfWork.CompleteAsync();
+        //    return property.Id;
+        //}
+
+        public async Task<int> AddAsync(AddPropertyDto propertyDto, PropertyImagesDto imagesDto)
         {
-            if(await _unitOfWork.Users.GetByIdAsync(propertyDto.LandlordId) is null)
+            // 1. Validate landlord exists
+            var landlord = await _unitOfWork.Users.GetByIdAsync(propertyDto.LandlordId);
+            if (landlord is null)
                 throw new Exception($"Landlord with Id {propertyDto.LandlordId} not found!");
 
-            byte[]? propertyImage = null;
+            if (landlord.Role != "landlord")
+                throw new Exception($"This User Does Not allowed to Add Properties");
 
-            // read main image
+            if(!imagesDto.Images.Any())
+                throw new Exception($"Property must have at least one secondary image!");
+
+            // 2. Read main image into bytes
+            byte[]? mainImageBytes = null;
             using (var memoryStream = new MemoryStream())
             {
-                propertyDto.MainImage.CopyTo(memoryStream);
-                propertyImage = memoryStream.ToArray();
-
+                await propertyDto.MainImage.CopyToAsync(memoryStream);
+                mainImageBytes = memoryStream.ToArray();
             }
 
-
-            await _unitOfWork.Properties.AddAsync(new()
+            // 3. Create Property entity
+            var property = new Property
             {
                 LandlordId = propertyDto.LandlordId,
                 Title = propertyDto.Title,
                 Description = propertyDto.Description,
                 Location = propertyDto.Location,
                 Price = propertyDto.Price,
-                MainImage = propertyImage,
+                MainImage = mainImageBytes,
                 Views = 0,
                 Status = "available",
                 PropertyApproval = "pending"
-            });
+            };
 
-            await _unitOfWork.CompleteAsync();
+            // 4. Add property (first)
+            await _unitOfWork.Properties.AddAsync(property);
+            await _unitOfWork.CompleteAsync(); // Save to generate PropertyId
+
+            // 5. Handle additional property images
+            if (imagesDto?.Images != null && imagesDto.Images.Any())
+            {
+                foreach (var formFile in imagesDto.Images)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await formFile.CopyToAsync(memoryStream);
+
+                    var propertyImage = new PropertyImage
+                    {
+                        PropertyId = property.Id, // newly created property ID
+                        Image = memoryStream.ToArray()
+                    };
+
+                    await _unitOfWork.PropertyImages.AddAsync(propertyImage);
+                }
+
+                await _unitOfWork.CompleteAsync(); // Save all images
+            }
+
+            return property.Id;
         }
 
-        public async Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto)
-        {
+
+
+        //public async Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto)
+        //{
         
 
-            if (await _unitOfWork.Properties.GetByIdAsync(propertyId) is null)
-                throw new Exception($"Property with Id {propertyId} not found!");
+        //    if (await _unitOfWork.Properties.GetByIdAsync(propertyId) is null)
+        //        throw new Exception($"Property with Id {propertyId} not found!");
 
 
-            byte[]? propertyImage = null;
+        //    byte[]? propertyImage = null;
 
-            // read image
-            using var memoryStream = new MemoryStream();
+        //    // read image
+        //    using var memoryStream = new MemoryStream();
 
 
-            propertyImageDto.Image!.CopyTo(memoryStream);
-            propertyImage = memoryStream.ToArray();
+        //    propertyImageDto.Image!.CopyTo(memoryStream);
+        //    propertyImage = memoryStream.ToArray();
 
-            await _unitOfWork.PropertyImages.AddAsync(new()
-            {
-                PropertyId = propertyId,
-                Image = propertyImage,
-            });
+        //    await _unitOfWork.PropertyImages.AddAsync(new()
+        //    {
+        //        PropertyId = propertyId,
+        //        Image = propertyImage,
+        //    });
 
-            await _unitOfWork.CompleteAsync();
-        }
+        //    await _unitOfWork.CompleteAsync();
+        //}
 
         public async Task ReplaceMainImageAsync(int propertyId, ImageDto image)
         {

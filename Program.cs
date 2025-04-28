@@ -13,7 +13,23 @@ namespace RentMateAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost3000",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
+
+
             // Add services to the container.
+
+
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -70,20 +86,14 @@ namespace RentMateAPI
                 options.Cookie.IsEssential = true;
             });
 
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowAll", policy =>
-            //    {
-            //        policy.AllowAnyOrigin()
-            //              .AllowAnyHeader()
-            //              .AllowAnyMethod();
-            //    });
-            //});
+           
 
 
 
 
             var app = builder.Build();
+
+            app.UseCors("AllowLocalhost3000");
 
             //app.UseStaticFiles();
 
@@ -94,7 +104,6 @@ namespace RentMateAPI
             app.UseSwaggerUI();
             //}
 
-            //app.UseCors("AllowAll");
 
 
             app.UseHttpsRedirection();

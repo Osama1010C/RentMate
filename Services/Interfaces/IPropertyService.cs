@@ -9,8 +9,9 @@ namespace RentMateAPI.Services.Interfaces
         Task<PropertyDto> GetDetailsAsync(int propertyId, int userId);
         Task<List<AllPropertyDto>> GetMyPropertiesAsync(int tenantId);
 
-        Task AddAsync(AddPropertyDto propertyDto);
-        Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto);
+        //Task<int> AddAsync(AddPropertyDto propertyDto);
+        Task<int> AddAsync(AddPropertyDto propertyDto, PropertyImagesDto imagesDto);
+        //Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto);
 
         Task ReplaceMainImageAsync(int propertyId, ImageDto image);
 

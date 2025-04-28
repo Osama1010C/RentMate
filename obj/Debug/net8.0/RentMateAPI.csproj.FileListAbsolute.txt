@@ -155,3 +155,5 @@ C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\bin\Debug\net8.0\Mi
 C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
 C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\bin\Debug\net8.0\RentMateAPI.staticwebassets.runtime.json
+C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\obj\Debug\net8.0\RentMateAPI.sourcelink.json
+C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

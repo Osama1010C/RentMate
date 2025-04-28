@@ -53,14 +53,28 @@ namespace RentMateAPI.Controllers
         }
 
 
+        //[HttpPost("AddProperty")]
+        ////[Authorize(Roles = "landlord")]
+        //public async Task<IActionResult> AddProperty([FromForm] AddPropertyDto propertyDto)
+        //{
+        //    try
+        //    {
+        //        return Ok(await _propertyService.AddAsync(propertyDto));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //}
+
+
         [HttpPost("AddProperty")]
         //[Authorize(Roles = "landlord")]
-        public async Task<IActionResult> AddProperty([FromForm] AddPropertyDto propertyDto)
+        public async Task<IActionResult> AddProperty([FromForm] AddPropertyDto propertyDto, [FromForm] PropertyImagesDto images)
         {
             try
             {
-                await _propertyService.AddAsync(propertyDto);
-                return Ok();
+                return Ok(await _propertyService.AddAsync(propertyDto, images));
             }
             catch (Exception ex)
             {
@@ -69,20 +83,20 @@ namespace RentMateAPI.Controllers
         }
 
 
-        [HttpPost("AddPropertyImage")]
-        //[Authorize(Roles = "landlord")]
-        public async Task<IActionResult> AddPropertyImage(int propertyId, [FromForm] AddPropertyImageDto propertyImageDto)
-        {
-            try
-            {
-                await _propertyService.AddImageAsync(propertyId, propertyImageDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
+        //[HttpPost("AddPropertyImage")]
+        ////[Authorize(Roles = "landlord")]
+        //public async Task<IActionResult> AddPropertyImage(int propertyId, [FromForm] AddPropertyImageDto propertyImageDto)
+        //{
+        //    try
+        //    {
+        //        await _propertyService.AddImageAsync(propertyId, propertyImageDto);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //}
 
 
 

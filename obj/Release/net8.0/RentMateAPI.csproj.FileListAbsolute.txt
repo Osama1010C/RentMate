@@ -156,3 +156,4 @@ C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\obj\Release\net8.0\
 C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\obj\Release\net8.0\RentMateAPI.genruntimeconfig.cache
 C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\obj\Release\net8.0\ref\RentMateAPI.dll
 C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\bin\Release\net8.0\RentMateAPI.staticwebassets.runtime.json
+C:\Osama_Code\.Net\Projects\RentMate\RentMateAPI\RentMateAPI\obj\Release\net8.0\RentMateAPI.sourcelink.json
