@@ -18,23 +18,40 @@ namespace RentMateAPI.Services.Implementations
 
         
 
-        public async Task<List<AllPropertyDto>> GetAllAsync()
+        public async Task<List<PropertyDto>> GetAllAsync()
         {
             var properties = await _unitOfWork.Properties.GetAllAsync(includeProperties:"Landlord");
 
-            var propertyDtos = properties.Select(property => new AllPropertyDto
+            //var propertyDtos = properties.Select(property => new AllPropertyDto
+            //{
+            //    Id = property.Id,
+            //    LandlordId = property.LandlordId,
+            //    //LandlordName = property.Landlord!.Name,
+            //    Title = property.Title,
+            //    //Description = property.Description,
+            //    Location = property.Location,
+            //    Price = property.Price,
+            //    Status = property.Status,
+            //    Views = property.Views,
+            //    MainImage = property.MainImage,
+            //    //CreateAt = property.CreateAt,
+            //    PropertyApproval = property.PropertyApproval
+            //}).ToList();
+
+            var propertyDtos = properties.Select(property => new PropertyDto
             {
                 Id = property.Id,
                 LandlordId = property.LandlordId,
-                //LandlordName = property.Landlord!.Name,
+                LandlordName = property.Landlord!.Name,
                 Title = property.Title,
-                //Description = property.Description,
+                Description = property.Description,
                 Location = property.Location,
                 Price = property.Price,
                 Status = property.Status,
                 Views = property.Views,
                 MainImage = property.MainImage,
-                //CreateAt = property.CreateAt,
+                CreateAt = property.CreateAt,
+                PropertyImages = GetPropertyImagesAsync(property.Id).Result,
                 PropertyApproval = property.PropertyApproval
             }).ToList();
 
@@ -83,7 +100,7 @@ namespace RentMateAPI.Services.Implementations
             return propertyDto;
         }
 
-        public async Task<List<AllPropertyDto>> GetMyPropertiesAsync(int tenantId)
+        public async Task<List<PropertyDto>> GetMyPropertiesAsync(int tenantId)
         {
             if (await _unitOfWork.Users.GetByIdAsync(tenantId) == null)
                 throw new Exception($"User with Id {tenantId} not found!");
@@ -95,19 +112,20 @@ namespace RentMateAPI.Services.Implementations
             var propertyDtos = properties.Select(p =>
                 {
                     var landlordName = _unitOfWork.Users.GetByIdAsync(p.Property.LandlordId).Result!.Name;
-                    return new AllPropertyDto
+                    return new PropertyDto
                     {
                         Id = p.Property.Id,
-                        //LandlordId = p.Property.LandlordId,
-                        //LandlordName = landlordName,
+                        LandlordId = p.Property.LandlordId,
+                        LandlordName = landlordName,
                         Title = p.Property.Title,
-                        //Description = p.Property.Description,
+                        Description = p.Property.Description,
                         Location = p.Property.Location,
                         Price = p.Property.Price,
                         Status = p.Property.Status,
                         Views = p.Property.Views,
                         MainImage = p.Property.MainImage,
-                        //CreateAt = p.Property.CreateAt,
+                        CreateAt = p.Property.CreateAt,
+                        PropertyImages = GetPropertyImagesAsync(p.Property.Id).Result,
                         PropertyApproval = p.Property.PropertyApproval
                     };
                 }).ToList();

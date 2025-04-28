@@ -5,6 +5,6 @@ namespace RentMateAPI.Services.Interfaces
     {
         Task<List<AllPropertyDto>> SearchByPriceAsync(decimal fromPrice, decimal toPrice);
         Task<List<AllPropertyDto>> SearchByLocationAsync(string location);
-        Task<List<AllPropertyDto>> SearchAsync(string? location = null, decimal? fromPrice = null, decimal? toPrice = null);
+        Task<List<PropertyDto>> SearchAsync(string? location = null, decimal? fromPrice = null, decimal? toPrice = null);
     }
 }

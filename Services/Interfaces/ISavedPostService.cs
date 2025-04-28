@@ -4,7 +4,7 @@ namespace RentMateAPI.Services.Interfaces
 {
     public interface ISavedPostService
     {
-        Task<List<AllPropertyDto>> GetAllSavedAsync(int tenantId);
+        Task<List<PropertyDto>> GetAllSavedAsync(int tenantId);
 
         Task SavePostAsync(int tenantId, int propertyId);
     }

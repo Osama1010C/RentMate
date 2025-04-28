@@ -5,9 +5,9 @@ namespace RentMateAPI.Services.Interfaces
 {
     public interface IPropertyService
     {
-        Task<List<AllPropertyDto>> GetAllAsync();
+        Task<List<PropertyDto>> GetAllAsync();
         Task<PropertyDto> GetDetailsAsync(int propertyId, int userId);
-        Task<List<AllPropertyDto>> GetMyPropertiesAsync(int tenantId);
+        Task<List<PropertyDto>> GetMyPropertiesAsync(int tenantId);
 
         //Task<int> AddAsync(AddPropertyDto propertyDto);
         Task<int> AddAsync(AddPropertyDto propertyDto, PropertyImagesDto imagesDto);
