@@ -5,6 +5,29 @@ using RentMateAPI.DTOModels.DTOMessage;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
 
+// data protection is used to encrypt and decrypt the message content.
+
+//Encryption   =>	AES-256 with HMACSHA256 for integrity
+
+//algorithm : AES-256-CBC
+//------------------------
+//Symmetric encryption(same key for encrypt and decrypt).
+//256 bits = very strong encryption.
+
+
+//HMACSHA256
+//------------------
+//After encrypting, it signs the encrypted data to ensure nobody tampered with it.
+
+//How HMACSHA256 works:
+
+//It takes:
+
+//The encrypted data (ciphertext)
+//A secret key
+//It runs a hashing algorithm (SHA-256) over this data plus the key.
+
+
 namespace RentMateAPI.Services.Implementations
 {
     public class MessageService : IMessageService
