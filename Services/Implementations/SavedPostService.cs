@@ -64,9 +64,14 @@ namespace RentMateAPI.Services.Implementations
                     TenantId = tenantId,
                     PropertyId = propertyId
                 });
-
-                await _unitOfWork.CompleteAsync();
             }
+            else
+            {
+                var savedProperty = await _unitOfWork.SavedPosts
+                    .GetAsync(p => (p.TenantId == tenantId) && (p.PropertyId == propertyId));
+                _unitOfWork.SavedPosts.Delete(savedProperty.Id);
+            }
+            await _unitOfWork.CompleteAsync();
         }
 
 
