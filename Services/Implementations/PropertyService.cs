@@ -22,22 +22,6 @@ namespace RentMateAPI.Services.Implementations
         {
             var properties = await _unitOfWork.Properties.GetAllAsync(includeProperties:"Landlord");
 
-            //var propertyDtos = properties.Select(property => new AllPropertyDto
-            //{
-            //    Id = property.Id,
-            //    LandlordId = property.LandlordId,
-            //    //LandlordName = property.Landlord!.Name,
-            //    Title = property.Title,
-            //    //Description = property.Description,
-            //    Location = property.Location,
-            //    Price = property.Price,
-            //    Status = property.Status,
-            //    Views = property.Views,
-            //    MainImage = property.MainImage,
-            //    //CreateAt = property.CreateAt,
-            //    PropertyApproval = property.PropertyApproval
-            //}).ToList();
-
             var propertyDtos = properties.Select(property => new PropertyDto
             {
                 Id = property.Id,
@@ -54,7 +38,7 @@ namespace RentMateAPI.Services.Implementations
                 CreateAt = property.CreateAt,
                 PropertyImages = GetPropertyImagesAsync(property.Id).Result,
                 PropertyApproval = property.PropertyApproval
-            }).ToList();
+            }).OrderByDescending(p => p.Views).ToList();
 
             return propertyDtos;
         }

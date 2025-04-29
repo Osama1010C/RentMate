@@ -55,66 +55,11 @@ namespace RentMateAPI.Services.Implementations
                     PropertyImages = GetPropertyImagesAsync(p.Id).Result,
                     PropertyApproval = p.PropertyApproval
                 };
-            }).ToList();
+            }).OrderByDescending(p => p.Views).ToList();
 
 
             return propertyDtos;
         }
-
-        //public async Task<List<AllPropertyDto>> SearchByLocationAsync(string location)
-        //{
-        //    var properties = await _unitOfWork.Properties
-        //                     .GetAllAsync(p => p.Location.Contains(location)
-        //                                       &&
-        //                                       p.Status == "available" && p.PropertyApproval == "accepted");
-        //    var result = properties.Select(s => new AllPropertyDto
-        //    {
-        //        Id = s.Id,
-        //        LandlordId = s.LandlordId,
-        //        Title = s.Title,
-        //        //Description = s.Description,
-        //        Location = s.Location,
-        //        Price = s.Price,
-        //        Status = s.Status,
-        //        Views = s.Views,
-        //        MainImage = s.MainImage,
-        //        //CreateAt = s.CreateAt,
-        //    }).ToList();
-        //    return result;
-        //}
-
-        //public async Task<List<AllPropertyDto>> SearchByPriceAsync(decimal fromPrice, decimal toPrice)
-        //{
-        //    //handle greater number
-        //    if (fromPrice > toPrice)
-        //    {
-        //        fromPrice = fromPrice + toPrice;
-        //        toPrice = fromPrice - toPrice;
-        //        fromPrice = fromPrice - toPrice;
-        //    }
-
-        //    var properties = await _unitOfWork.Properties
-        //                    .GetAllAsync(p => (p.Price >= fromPrice && p.Price <= toPrice)
-        //                                      && 
-        //                                      p.Status == "available" && p.PropertyApproval == "accepted");
-
-        //    var result = properties.Select(s => new AllPropertyDto
-        //    {
-        //        Id = s.Id,
-        //        LandlordId = s.LandlordId,
-        //        Title = s.Title,
-        //        //Description = s.Description,
-        //        Location = s.Location,
-        //        Price = s.Price,
-        //        Status = s.Status,
-        //        Views = s.Views,
-        //        MainImage = s.MainImage,
-        //        //CreateAt = s.CreateAt,
-        //    }).ToList();
-        //    return result;
-        //}
-
-
 
 
         private async Task<List<PropertyImageDto>> GetPropertyImagesAsync(int propertyId)

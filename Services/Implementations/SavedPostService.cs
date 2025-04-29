@@ -24,20 +24,6 @@ namespace RentMateAPI.Services.Implementations
 
 
 
-            //var propertyDtos = savedPosts.Select(sp => new AllPropertyDto
-            //{
-            //    Id = sp.Property.Id,
-            //    //LandlordId = sp.Property.LandlordId,
-            //    Title = sp.Property.Title,
-            //    //Description = sp.Property.Description,
-            //    Location = sp.Property.Location,
-            //    Price = sp.Property.Price,
-            //    Status = sp.Property.Status,
-            //    Views = sp.Property.Views,
-            //    MainImage = sp.Property.MainImage,
-            //    //CreateAt = sp.Property.CreateAt,
-            //}).ToList();
-
             var propertyDtos = savedPosts.Select(p =>
             {
                 var landlordName = _unitOfWork.Users.GetByIdAsync(p.Property.LandlordId).Result!.Name;
@@ -59,7 +45,7 @@ namespace RentMateAPI.Services.Implementations
                     PropertyImages = GetPropertyImagesAsync(p.Property.Id).Result,
                     PropertyApproval = p.Property.PropertyApproval
                 };
-            }).ToList();
+            }).OrderByDescending(p => p.Views).ToList();
 
 
             return propertyDtos;
