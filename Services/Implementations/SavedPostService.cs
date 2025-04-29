@@ -41,11 +41,13 @@ namespace RentMateAPI.Services.Implementations
             var propertyDtos = savedPosts.Select(p =>
             {
                 var landlordName = _unitOfWork.Users.GetByIdAsync(p.Property.LandlordId).Result!.Name;
+                var landlordImage = _unitOfWork.Users.GetByIdAsync(p.Property.LandlordId).Result!.Image;
                 return new PropertyDto
                 {
                     Id = p.Property.Id,
                     LandlordId = p.Property.LandlordId,
                     LandlordName = landlordName,
+                    LandlordImage = landlordImage,
                     Title = p.Property.Title,
                     Description = p.Property.Description,
                     Location = p.Property.Location,

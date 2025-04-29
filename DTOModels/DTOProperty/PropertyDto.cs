@@ -9,6 +9,7 @@ namespace RentMateAPI.DTOModels.DTOProperty
         public int? LandlordId { get; set; }
 
         public string LandlordName { get; set; } = null!;
+        public byte[]? LandlordImage { get; set; }
 
         public string Title { get; set; } = null!;
 
