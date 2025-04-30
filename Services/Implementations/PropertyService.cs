@@ -43,7 +43,7 @@ namespace RentMateAPI.Services.Implementations
             return propertyDtos;
         }
 
-        public async Task<PropertyDto> GetDetailsAsync(int propertyId, int userId)
+        public async Task<PropertyDetailsDto> GetDetailsAsync(int propertyId, int userId)
         {
             if(await _unitOfWork.Users.GetByIdAsync(userId) == null) 
                 throw new Exception($"User with Id {userId} not found!");
@@ -52,7 +52,7 @@ namespace RentMateAPI.Services.Implementations
             if (property is null) 
                 throw new Exception($"Property with Id {propertyId} not exist!");
 
-            var propertyDto = new PropertyDto
+            var propertyDto = new PropertyDetailsDto
             {
                 Id = property.Id,
                 LandlordId = property.LandlordId,
@@ -67,7 +67,8 @@ namespace RentMateAPI.Services.Implementations
                 MainImage = property.MainImage,
                 CreateAt = property.CreateAt,
                 PropertyImages = await GetPropertyImagesAsync(propertyId),
-                PropertyApproval = property.PropertyApproval
+                PropertyApproval = property.PropertyApproval,
+                IsSaved = !await IsNewSavedPostAsync(userId, propertyId)
             };
 
             if (await IsNewViewAsync(userId, propertyId))
@@ -317,7 +318,13 @@ namespace RentMateAPI.Services.Implementations
             return result.ToList();
         }
 
-        
+        private async Task<bool> IsNewSavedPostAsync(int tenantId, int propertyId)
+        {
+            var savedPost = await _unitOfWork.SavedPosts
+                        .GetAllAsync(p => (p.TenantId == tenantId) && (p.PropertyId == propertyId));
+
+            return savedPost.Count() == 0 ? true : false;
+        }
 
     }
 }
