@@ -1,4 +1,6 @@
-﻿using RentMateAPI.Data.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using RentMateAPI.Data.Models;
+using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.DTOModels.DTOUser;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
@@ -13,6 +15,9 @@ namespace RentMateAPI.Services.Implementations
         {
             this._unitOfWork = unitOfWork;
         }
+
+        
+
         public async Task<UserDto> AddUserAsync(NewUserDto userDto, string role)
         {
             var hashedPassword = BC.EnhancedHashPassword(userDto.Password);
@@ -71,6 +76,29 @@ namespace RentMateAPI.Services.Implementations
                 Role = user.Role
             };
             return dtoUser;
+        }
+
+        public async Task<byte[]> GetUserImageAsync(int userId)
+        {
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if (user is null) throw new Exception($"user with {userId} not exist");
+            return user.Image!;
+                
+        }
+        public async Task AddImageAsync(UserImageDto userImage)
+        {
+            var user = await _unitOfWork.Users.GetByIdAsync(userImage.Id);
+            if (user is null) throw new Exception($"user with {userImage.Id} not exist");
+
+            byte[]? mainImageBytes = null;
+            using (var memoryStream = new MemoryStream())
+            {
+                await userImage.Image!.CopyToAsync(memoryStream);
+                mainImageBytes = memoryStream.ToArray();
+            }
+            user = await _unitOfWork.Users.GetByIdAsync(userImage.Id);
+            user!.Image = mainImageBytes;
+            await _unitOfWork.CompleteAsync();
         }
     }
 }

@@ -19,23 +19,23 @@ namespace RentMateAPI
                 options.AddPolicy("AllowLocalhost3000",
                     builder =>
                     {
-                        builder.WithOrigins("https://localhost:3000")
+                        builder.WithOrigins("http://localhost:3000")
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials();
                     });
             });
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowLocalhost", builder =>
-                {
-                    builder.WithOrigins("http://localhost:3001")
-                          .AllowAnyMethod()  
-                          .AllowAnyHeader()
-                          .AllowCredentials();
-                });
-            });
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowLocalhost", builder =>
+            //    {
+            //        builder.WithOrigins("http://localhost:3001")
+            //              .AllowAnyMethod()  
+            //              .AllowAnyHeader()
+            //              .AllowCredentials();
+            //    });
+            //});
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -95,7 +95,7 @@ namespace RentMateAPI
             var app = builder.Build();
 
             app.UseCors("AllowLocalhost3000");
-            app.UseCors("AllowLocalhost");
+            //app.UseCors("AllowLocalhost");
 
             //app.UseStaticFiles();
 
