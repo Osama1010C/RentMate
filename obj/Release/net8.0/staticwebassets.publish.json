@@ -1,12 +1,20 @@
 {
   "Version": 1,
-  "Hash": "G/8PcMUlRtjhkMXK9vX5Y6jIhP5+B38cvNSTfb54+Js=",
+  "Hash": "YI7Xceaxi3ao3/jnIkgzhB3K302kByGSZez4EsT9xqo=",
   "Source": "RentMateAPI",
   "BasePath": "_content/RentMateAPI",
   "Mode": "Default",
   "ManifestType": "Publish",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "RentMateAPI\\wwwroot",
+      "Source": "RentMateAPI",
+      "ContentRoot": "C:\\Osama_Code\\.Net\\Projects\\RentMate\\RentMateAPI\\RentMateAPI\\wwwroot\\",
+      "BasePath": "_content/RentMateAPI",
+      "Pattern": "**"
+    }
+  ],
   "Assets": [],
   "Endpoints": []
 }
