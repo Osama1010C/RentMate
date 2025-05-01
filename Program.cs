@@ -73,6 +73,7 @@ namespace RentMateAPI
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
@@ -104,6 +105,7 @@ namespace RentMateAPI
             //{
             app.UseSwagger();
             app.UseSwaggerUI();
+            
             //}
 
             app.UseHttpsRedirection();
