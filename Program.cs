@@ -19,17 +19,24 @@ namespace RentMateAPI
                 options.AddPolicy("AllowLocalhost3000",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000")
+                        builder.WithOrigins("https://localhost:3000")
                                .AllowAnyHeader()
-                               .AllowAnyMethod();
+                               .AllowAnyMethod()
+                               .AllowCredentials();
                     });
             });
 
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowLocalhost", builder =>
+                {
+                    builder.WithOrigins("http://localhost:3001")
+                          .AllowAnyMethod()  
+                          .AllowAnyHeader()
+                          .AllowCredentials();
+                });
+            });
             // Add services to the container.
-
-
-
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -50,10 +57,6 @@ namespace RentMateAPI
             builder.Services.AddDataProtection();
 
             builder.Services.AddApplicationServices();
-
-
-
-
 
             var jwtSettings = builder.Configuration.GetSection("JWT");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
@@ -77,23 +80,22 @@ namespace RentMateAPI
                 };
             });
 
-
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(5);
-                options.Cookie.HttpOnly = true;
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(5);
+                options.Cookie.HttpOnly = false;
                 options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.None; // new line
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // new line
+
             });
-
-           
-
-
-
 
             var app = builder.Build();
 
             app.UseCors("AllowLocalhost3000");
+            app.UseCors("AllowLocalhost");
 
             //app.UseStaticFiles();
 
@@ -104,12 +106,8 @@ namespace RentMateAPI
             app.UseSwaggerUI();
             //}
 
-
-
             app.UseHttpsRedirection();
-
             app.UseSession();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
