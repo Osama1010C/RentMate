@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RentMateAPI.Services.Interfaces;
 
 namespace RentMateAPI.Controllers
 {
     [Route("RentMate/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "landlord")]
+    [Authorize(Roles = "landlord")]
     public class LandlordController : ControllerBase
     {
         private readonly IRentalService _rentalService;

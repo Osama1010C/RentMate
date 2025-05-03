@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RentMateAPI.DTOModels.DTOComment;
 using RentMateAPI.Services.Interfaces;
 
@@ -6,7 +7,7 @@ namespace RentMateAPI.Controllers
 {
     [Route("RentMate/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "admin,tenant,landlord")]
+    [Authorize(Roles = "tenant,landlord")]
     public class CommentController : ControllerBase
     {
         private readonly ICommentService _commentService;

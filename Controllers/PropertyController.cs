@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RentMateAPI.DTOModels.DTOImage;
 using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.Services.Interfaces;
@@ -38,7 +39,7 @@ namespace RentMateAPI.Controllers
 
 
         [HttpGet("MyProperties/{tenantId}")]
-        //[Authorize(Roles = "tenant")]
+        [Authorize(Roles = "tenant")]
         public async Task<IActionResult> GetMyProperties(int tenantId)
         {
             try
@@ -53,23 +54,11 @@ namespace RentMateAPI.Controllers
         }
 
 
-        //[HttpPost("AddProperty")]
-        ////[Authorize(Roles = "landlord")]
-        //public async Task<IActionResult> AddProperty([FromForm] AddPropertyDto propertyDto)
-        //{
-        //    try
-        //    {
-        //        return Ok(await _propertyService.AddAsync(propertyDto));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return NotFound(ex.Message);
-        //    }
-        //}
+        
 
 
         [HttpPost("AddProperty")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> AddProperty([FromForm] AddPropertyDto propertyDto, [FromForm] PropertyImagesDto images)
         {
             try
@@ -101,7 +90,7 @@ namespace RentMateAPI.Controllers
 
 
         [HttpPut("ReplacePropertyMainImage/{propertyId}")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> ReplacePropertyMainImage(int propertyId, [FromForm] ImageDto image)
         {
             try
@@ -119,7 +108,7 @@ namespace RentMateAPI.Controllers
 
 
         [HttpPut("Update/{propertyId}")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> UpdateProperty(int propertyId, [FromBody] UpdatedPropertDto propertyDto)
         {
             try
@@ -135,7 +124,7 @@ namespace RentMateAPI.Controllers
 
 
         [HttpDelete("Delete/{propertyId}")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> DeleteProperty(int propertyId)
         {
             try
@@ -150,7 +139,7 @@ namespace RentMateAPI.Controllers
         }
 
         [HttpDelete("DeletePropertyImage/{propertyImageId}")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> DeletePropertyImage(int propertyImageId)
         {
             try

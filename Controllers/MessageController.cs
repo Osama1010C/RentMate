@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace RentMateAPI.Controllers
 {
     [Route("RentMate/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "admin,tenant,landlord")]
+    [Authorize(Roles = "admin,tenant,landlord")]
 
     public class MessageController : ControllerBase
     {

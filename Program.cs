@@ -84,8 +84,8 @@ namespace RentMateAPI
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(5);
-                options.Cookie.MaxAge = TimeSpan.FromMinutes(5);
+                options.IdleTimeout = TimeSpan.FromMinutes(1000);
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(1000);
                 options.Cookie.HttpOnly = false;
                 options.Cookie.IsEssential = true;
                 options.Cookie.SameSite = SameSiteMode.None; // new line

@@ -1,4 +1,4 @@
-﻿// THIS CONTROLLER IS JUST FOR TESTING //
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentMateAPI.DTOModels.DTOUser;
 using RentMateAPI.Services.Interfaces;
@@ -7,6 +7,7 @@ namespace RentMateAPI.Controllers
 {
     [Route("RentMate/[controller]")]
     [ApiController]
+    [Authorize(Roles ="admin,landlord,tenant")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -60,9 +61,9 @@ namespace RentMateAPI.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody] NewUserDto userDto, string role)
-            => Ok(await _userService.AddUserAsync(userDto, role));
+        //[HttpPost]
+        //public async Task<IActionResult> AddUser([FromBody] NewUserDto userDto, string role)
+        //    => Ok(await _userService.AddUserAsync(userDto, role));
 
     }
 }

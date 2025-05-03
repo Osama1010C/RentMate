@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentMateAPI.Data;
 using RentMateAPI.DTOModels.DTORent;
@@ -18,7 +19,7 @@ namespace RentMateAPI.Controllers
 
 
         [HttpGet("Requests/{landlordId}")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> GetAllRentingRequests(int landlordId)
         {
             try
@@ -33,7 +34,7 @@ namespace RentMateAPI.Controllers
 
 
         [HttpGet("MyRentRequests/{tenantId}")]
-        //[Authorize(Roles = "tenant")]
+        [Authorize(Roles = "tenant")]
         public async Task<IActionResult> GetAllTenantRentRequests(int tenantId)
         {
             try
@@ -47,7 +48,7 @@ namespace RentMateAPI.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "tenant")]
+        [Authorize(Roles = "tenant")]
         public async Task<IActionResult> RentProperty([FromForm] RentPropertyDto rentDto)
         {
             try
