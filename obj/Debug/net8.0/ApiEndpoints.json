@@ -500,27 +500,6 @@
   },
   {
     "ContainingType": "RentMateAPI.Controllers.UserController",
-    "Method": "AddUser",
-    "RelativePath": "RentMate/User",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userDto",
-        "Type": "RentMateAPI.DTOModels.DTOUser.NewUserDto",
-        "IsRequired": true
-      },
-      {
-        "Name": "role",
-        "Type": "System.String",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "RentMateAPI.Controllers.UserController",
     "Method": "GetUser",
     "RelativePath": "RentMate/User/{id}",
     "HttpMethod": "GET",

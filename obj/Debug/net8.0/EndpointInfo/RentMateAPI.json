@@ -763,44 +763,6 @@
             "description": "OK"
           }
         }
-      },
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "parameters": [
-          {
-            "name": "role",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewUserDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewUserDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
       }
     },
     "/RentMate/User/{id}": {
@@ -903,24 +865,6 @@
             "format": "int32"
           },
           "content": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "NewUserDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
             "type": "string",
             "nullable": true
           }
