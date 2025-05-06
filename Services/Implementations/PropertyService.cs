@@ -68,7 +68,8 @@ namespace RentMateAPI.Services.Implementations
                 CreateAt = property.CreateAt,
                 PropertyImages = await GetPropertyImagesAsync(propertyId),
                 PropertyApproval = property.PropertyApproval,
-                IsSaved = !await IsNewSavedPostAsync(userId, propertyId)
+                IsSaved = !await IsNewSavedPostAsync(userId, propertyId),
+                IsAskForRent = await IsAskedForRentAsync(userId, propertyId)
             };
 
             if (await IsNewViewAsync(userId, propertyId))
@@ -123,38 +124,7 @@ namespace RentMateAPI.Services.Implementations
             return propertyDtos;
         }
 
-        //public async Task<int> AddAsync(AddPropertyDto propertyDto)
-        //{
-        //    if(await _unitOfWork.Users.GetByIdAsync(propertyDto.LandlordId) is null)
-        //        throw new Exception($"Landlord with Id {propertyDto.LandlordId} not found!");
-
-        //    byte[]? propertyImage = null;
-
-        //    // read main image
-        //    using (var memoryStream = new MemoryStream())
-        //    {
-        //        propertyDto.MainImage.CopyTo(memoryStream);
-        //        propertyImage = memoryStream.ToArray();
-
-        //    }
-
-        //    var property = new Property
-        //    {
-        //        LandlordId = propertyDto.LandlordId,
-        //        Title = propertyDto.Title,
-        //        Description = propertyDto.Description,
-        //        Location = propertyDto.Location,
-        //        Price = propertyDto.Price,
-        //        MainImage = propertyImage,
-        //        Views = 0,
-        //        Status = "available",
-        //        PropertyApproval = "pending"
-        //    };
-        //    await _unitOfWork.Properties.AddAsync(property);
-
-        //    await _unitOfWork.CompleteAsync();
-        //    return property.Id;
-        //}
+        
 
         public async Task<int> AddAsync(AddPropertyDto propertyDto, PropertyImagesDto imagesDto)
         {
@@ -220,31 +190,7 @@ namespace RentMateAPI.Services.Implementations
 
 
 
-        //public async Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto)
-        //{
         
-
-        //    if (await _unitOfWork.Properties.GetByIdAsync(propertyId) is null)
-        //        throw new Exception($"Property with Id {propertyId} not found!");
-
-
-        //    byte[]? propertyImage = null;
-
-        //    // read image
-        //    using var memoryStream = new MemoryStream();
-
-
-        //    propertyImageDto.Image!.CopyTo(memoryStream);
-        //    propertyImage = memoryStream.ToArray();
-
-        //    await _unitOfWork.PropertyImages.AddAsync(new()
-        //    {
-        //        PropertyId = propertyId,
-        //        Image = propertyImage,
-        //    });
-
-        //    await _unitOfWork.CompleteAsync();
-        //}
 
         public async Task ReplaceMainImageAsync(int propertyId, ImageDto image)
         {
@@ -324,6 +270,14 @@ namespace RentMateAPI.Services.Implementations
                         .GetAllAsync(p => (p.TenantId == tenantId) && (p.PropertyId == propertyId));
 
             return savedPost.Count() == 0 ? true : false;
+        }
+
+        private async Task<bool> IsAskedForRentAsync(int tenantId, int propertyId)
+        {
+            var rentingProperty = await _unitOfWork.RentalRequests
+                        .GetAllAsync(r => (r.TenantId == tenantId) && (r.PropertyId == propertyId) && (r.Status == "pending"));
+
+            return rentingProperty.Count() > 0;
         }
 
     }

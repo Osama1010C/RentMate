@@ -6,7 +6,7 @@
 
         public int PropertyId { get; set; }
 
-        public IFormFile RequirmentDocument { get; set; } = null!;
+        public IFormFile? RequirmentDocument { get; set; }
 
     }
 }

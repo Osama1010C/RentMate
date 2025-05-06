@@ -61,5 +61,20 @@ namespace RentMateAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpDelete]
+        [Authorize(Roles = "tenant")]
+        public async Task<IActionResult> CancelRentRequestProperty(int tenantId, int propertyId)
+        {
+            try
+            {
+                await _rentalService.CancelRentPropertyAsync(tenantId, propertyId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

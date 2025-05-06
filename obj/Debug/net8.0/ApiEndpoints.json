@@ -395,6 +395,27 @@
   },
   {
     "ContainingType": "RentMateAPI.Controllers.RentalRequestController",
+    "Method": "CancelRentRequestProperty",
+    "RelativePath": "RentMate/RentalRequest",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenantId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "propertyId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RentMateAPI.Controllers.RentalRequestController",
     "Method": "GetAllTenantRentRequests",
     "RelativePath": "RentMate/RentalRequest/MyRentRequests/{tenantId}",
     "HttpMethod": "GET",

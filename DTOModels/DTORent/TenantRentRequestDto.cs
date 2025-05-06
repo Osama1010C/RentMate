@@ -6,6 +6,7 @@
         public string TenantName { get; set; } = null!;
 
         public string PropertyTitle { get; set; } = null!;
+        public string RentStatus { get; set; } = null!;
 
         public byte[] PropertyMainImage { get; set; } = null!;
 

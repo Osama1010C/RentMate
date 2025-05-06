@@ -25,6 +25,7 @@ namespace RentMateAPI.DTOModels.DTOProperty
         public int? Views { get; set; }
 
         public bool IsSaved { get; set; } = false;
+        public bool IsAskForRent { get; set; } = false;
 
         public string Status { get; set; } = null!;
 

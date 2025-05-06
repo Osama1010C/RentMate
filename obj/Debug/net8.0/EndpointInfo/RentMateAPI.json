@@ -661,6 +661,34 @@
             "description": "OK"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "RentalRequest"
+        ],
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "propertyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/RentMate/Save/Posts/{tenantId}": {
