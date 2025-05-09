@@ -1,4 +1,5 @@
-﻿using RentMateAPI.DTOModels.DTORent;
+﻿using RentMateAPI.DTOModels.DTOProperty;
+using RentMateAPI.DTOModels.DTORent;
 
 namespace RentMateAPI.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace RentMateAPI.Services.Interfaces
         Task RejectRequestAsync(int requestId); 
 
         Task<List<RentPropertyRequestDto>> GetAllRequestsAsync(int landlordId);
-        Task<List<TenantRentRequestDto>> GetTenantRequestsAsync(int tenantId);
+        Task<List<PropertyRequestDto>> GetTenantRequestsAsync(int tenantId);
 
         Task RentPropertyAsync(RentPropertyDto rentDto);
         Task CancelRentPropertyAsync(int tenantId, int propertyId);

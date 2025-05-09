@@ -2,6 +2,6 @@
 {
     public class ImageDto
     {
-        public IFormFile Image { get; set; } = null!;
+        public IFormFile? Image { get; set; }
     }
 }

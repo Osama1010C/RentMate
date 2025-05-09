@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RentMateAPI.Data.Models;
+using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.DTOModels.DTORent;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
@@ -101,7 +102,7 @@ namespace RentMateAPI.Services.Implementations
             return result;
         }
 
-        public async Task<List<TenantRentRequestDto>> GetTenantRequestsAsync(int tenantId)
+        public async Task<List<PropertyRequestDto>> GetTenantRequestsAsync(int tenantId)
         {
             var tenant = await _unitOfWork.Users.GetByIdAsync(tenantId);
             if (tenant is null) throw new Exception("this tenant id not found");
@@ -112,16 +113,42 @@ namespace RentMateAPI.Services.Implementations
             var requests = await _unitOfWork.RentalRequests
                             .GetAllAsync(r => (r.TenantId == tenantId) , includeProperties: "Property");
 
-            if (requests is null) return new List<TenantRentRequestDto>();
+            if (requests is null) return new List<PropertyRequestDto>();
 
-            var requestInfo = requests.Select(r => new TenantRentRequestDto
+            //var requestInfo = requests.Select(r => new TenantRentRequestDto
+            //{
+            //    RentId = r.Id,
+            //    TenantName = r.Tenant.Name,
+            //    PropertyTitle = r.Property.Title,
+            //    RentStatus = r.Status,
+            //    PropertyMainImage = r.Property.MainImage,
+            //    CreateAt = r.CreateAt,
+            //});
+            var requestInfo = requests.Select(r =>
             {
-                RentId = r.Id,
-                TenantName = r.Tenant.Name,
-                PropertyTitle = r.Property.Title,
-                RentStatus = r.Status,
-                PropertyMainImage = r.Property.MainImage,
-                CreateAt = r.CreateAt,
+                var landlordName = _unitOfWork.Users.GetByIdAsync(r.Property.LandlordId).Result!.Name;
+                var landlordImage = _unitOfWork.Users.GetByIdAsync(r.Property.LandlordId).Result!.Image;
+                return new PropertyRequestDto
+                {
+                    PropertyId = r.Property.Id,
+                    RentId = r.Id,
+                    TenantName = r.Tenant.Name,
+                    PropertyTitle = r.Property.Title,
+                    RentStatus = r.Status,
+                    PropertyMainImage = r.Property.MainImage,
+                    RequestCreateAt = r.CreateAt,    
+                    LandlordId = r.Property.LandlordId,
+                    LandlordName = landlordName,
+                    LandlordImage = landlordImage,
+                    Title = r.Property.Title,
+                    Description = r.Property.Description,
+                    Location = r.Property.Location,
+                    Price = r.Property.Price,
+                    Status = r.Property.Status,
+                    Views = r.Property.Views,
+                    PropertyImages = GetPropertyImagesAsync(r.Property.Id).Result,
+                    PropertyCreateAt = r.Property.CreateAt
+                };
             });
 
             return requestInfo.ToList();
@@ -232,5 +259,17 @@ namespace RentMateAPI.Services.Implementations
             return isUserExist && isPropertyExist;
 
         }
+        private async Task<List<PropertyImageDto>> GetPropertyImagesAsync(int propertyId)
+        {
+            var images = await _unitOfWork.PropertyImages.GetAllAsync(p => p.PropertyId == propertyId);
+            var result = images.Select(m => new PropertyImageDto
+            {
+                PropertyImageId = m.Id,
+                Image = m.Image
+            });
+            return result.ToList();
+        }
     }
+
+    
 }

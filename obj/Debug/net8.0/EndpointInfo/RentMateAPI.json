@@ -440,16 +440,15 @@
         }
       }
     },
-    "/RentMate/Property/ReplacePropertyMainImage/{propertyId}": {
-      "put": {
+    "/RentMate/Property/AddPropertyImage": {
+      "post": {
         "tags": [
           "Property"
         ],
         "parameters": [
           {
             "name": "propertyId",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -501,19 +500,45 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/UpdatedPropertDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatedPropertDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatedPropertDto"
+                "type": "object",
+                "properties": {
+                  "Title": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "Price": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "Location": {
+                    "type": "string"
+                  },
+                  "Image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "Title": {
+                  "style": "form"
+                },
+                "Description": {
+                  "style": "form"
+                },
+                "Price": {
+                  "style": "form"
+                },
+                "Location": {
+                  "style": "form"
+                },
+                "Image": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -622,34 +647,38 @@
         "tags": [
           "RentalRequest"
         ],
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "propertyId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "TenantId": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "PropertyId": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "RequirmentDocument": {
+                  "document": {
                     "type": "string",
                     "format": "binary"
                   }
                 }
               },
               "encoding": {
-                "TenantId": {
-                  "style": "form"
-                },
-                "PropertyId": {
-                  "style": "form"
-                },
-                "RequirmentDocument": {
+                "document": {
                   "style": "form"
                 }
               }
@@ -893,28 +922,6 @@
             "format": "int32"
           },
           "content": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdatedPropertDto": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "price": {
-            "type": "number",
-            "format": "double"
-          },
-          "location": {
             "type": "string",
             "nullable": true
           }

@@ -11,11 +11,12 @@ namespace RentMateAPI.Services.Interfaces
 
         //Task<int> AddAsync(AddPropertyDto propertyDto);
         Task<int> AddAsync(AddPropertyDto propertyDto, PropertyImagesDto imagesDto);
-        //Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto);
+        Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto);
 
         Task ReplaceMainImageAsync(int propertyId, ImageDto image);
 
-        Task UpdateAsync(int propertyId, UpdatedPropertDto propertyDto);
+        //Task UpdateAsync(int propertyId, UpdatedPropertDto propertyDto);
+        Task UpdatePropertyAsync(int propertyId, UpdatedPropertDto propertyDto, ImageDto? image = null);
         Task DeleteAsync(int propertyId);
 
         Task DeleteImageAsync(int propertyImageId);

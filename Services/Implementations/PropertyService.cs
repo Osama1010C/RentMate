@@ -213,19 +213,72 @@ namespace RentMateAPI.Services.Implementations
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task UpdateAsync(int propertyId, UpdatedPropertDto propertyDto)
+        //public async Task UpdateAsync(int propertyId, UpdatedPropertDto propertyDto)
+        //{
+        //    var prop = await _unitOfWork.Properties.GetAsync(p => p.Id == propertyId && p.Status != "rented");
+        //    if (prop is null) throw new Exception($"Property with id : {propertyId} not found or not availble");
+
+
+        //    prop.Title = propertyDto.Title;
+        //    prop.Description = propertyDto.Description;
+        //    prop.Location = propertyDto.Location;
+        //    prop.Price = propertyDto.Price;
+
+        //    await _unitOfWork.CompleteAsync();
+        //}
+
+        public async Task UpdatePropertyAsync(int propertyId, UpdatedPropertDto propertyDto, ImageDto? image = null)
         {
-            var prop = await _unitOfWork.Properties.GetAsync(p => p.Id == propertyId && p.Status != "rented");
-            if (prop is null) throw new Exception($"Property with id : {propertyId} not found or not availble");
+            var property = await _unitOfWork.Properties.GetAsync(p => p.Id == propertyId && p.Status != "rented");
+            if (property is null)
+                throw new Exception($"Property with id: {propertyId} not found or not available");
 
+            // Update only if values are provided
+            if (!string.IsNullOrWhiteSpace(propertyDto.Title))
+                property.Title = propertyDto.Title;
 
-            prop.Title = propertyDto.Title;
-            prop.Description = propertyDto.Description;
-            prop.Location = propertyDto.Location;
-            prop.Price = propertyDto.Price;
+            if (!string.IsNullOrWhiteSpace(propertyDto.Description))
+                property.Description = propertyDto.Description;
+
+            if (!string.IsNullOrWhiteSpace(propertyDto.Location))
+                property.Location = propertyDto.Location;
+
+            if (propertyDto.Price.HasValue)
+                property.Price = propertyDto.Price.Value;
+
+            // Handle optional image
+            if (image != null && image.Image != null)
+            {
+                using var memoryStream = new MemoryStream();
+                image.Image.CopyTo(memoryStream);
+                property.MainImage = memoryStream.ToArray();
+            }
 
             await _unitOfWork.CompleteAsync();
         }
+
+        public async Task AddImageAsync(int propertyId, AddPropertyImageDto propertyImageDto)
+        {
+            var property = await _unitOfWork.Properties.GetByIdAsync(propertyId);
+            if (property is null) throw new Exception($"Property with id : {propertyId} not found or not availble");
+            byte[]? propertyImage = null;
+
+            if(propertyImageDto.Image == null)
+                throw new Exception($"Please send image");
+
+            // read image
+            using var memoryStream = new MemoryStream();
+            propertyImageDto.Image.CopyTo(memoryStream);
+            propertyImage = memoryStream.ToArray();
+            var propertyImageEntity = new PropertyImage
+            {
+                PropertyId = propertyId,
+                Image = propertyImage
+            };
+            await _unitOfWork.PropertyImages.AddAsync(propertyImageEntity);
+            await _unitOfWork.CompleteAsync();
+        }
+
 
         public async Task DeleteAsync(int propertyId)
         {

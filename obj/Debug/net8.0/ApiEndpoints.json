@@ -279,6 +279,27 @@
   },
   {
     "ContainingType": "RentMateAPI.Controllers.PropertyController",
+    "Method": "AddPropertyImage",
+    "RelativePath": "RentMate/Property/AddPropertyImage",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "propertyId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RentMateAPI.Controllers.PropertyController",
     "Method": "DeleteProperty",
     "RelativePath": "RentMate/Property/Delete/{propertyId}",
     "HttpMethod": "DELETE",
@@ -327,27 +348,6 @@
   },
   {
     "ContainingType": "RentMateAPI.Controllers.PropertyController",
-    "Method": "ReplacePropertyMainImage",
-    "RelativePath": "RentMate/Property/ReplacePropertyMainImage/{propertyId}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "propertyId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "Image",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "RentMateAPI.Controllers.PropertyController",
     "Method": "UpdateProperty",
     "RelativePath": "RentMate/Property/Update/{propertyId}",
     "HttpMethod": "PUT",
@@ -360,9 +360,29 @@
         "IsRequired": true
       },
       {
-        "Name": "propertyDto",
-        "Type": "RentMateAPI.DTOModels.DTOProperty.UpdatedPropertDto",
-        "IsRequired": true
+        "Name": "Title",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Price",
+        "Type": "System.Nullable\u00601[[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Location",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -376,17 +396,17 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "TenantId",
+        "Name": "tenantId",
         "Type": "System.Int32",
         "IsRequired": false
       },
       {
-        "Name": "PropertyId",
+        "Name": "propertyId",
         "Type": "System.Int32",
         "IsRequired": false
       },
       {
-        "Name": "RequirmentDocument",
+        "Name": "document",
         "Type": "Microsoft.AspNetCore.Http.IFormFile",
         "IsRequired": false
       }
