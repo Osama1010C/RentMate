@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using RentMateAPI.Data;
-using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOMessage;
 using RentMateAPI.Services.Interfaces;
 
@@ -12,7 +7,7 @@ namespace RentMateAPI.Controllers
 {
     [Route("RentMate/[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin,tenant,landlord")]
+    //[Authorize(Roles = "admin,tenant,landlord")]
 
     public class MessageController : ControllerBase
     {
@@ -59,10 +54,23 @@ namespace RentMateAPI.Controllers
                 await _messageService.AddMessageAsync(senderId, recieverId, message);
                 return Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return NotFound(ex.Message);
             }
         }
+        //[HttpPost("SendMessage")]
+        //public async Task<IActionResult> AddMessage(AddMessageDto messageDto)
+        //{
+        //    try
+        //    {
+        //        await _messageService.AddMessageAsync(messageDto.senderId, messageDto.recieverId, messageDto.message!);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //}
     }
 }
