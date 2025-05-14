@@ -1,5 +1,4 @@
-﻿using RentMateAPI.Data.Models;
-using RentMateAPI.DTOModels.DTOProperty;
+﻿using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
 

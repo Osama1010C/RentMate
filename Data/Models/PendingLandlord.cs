@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace RentMateAPI.Data.Models;
+﻿namespace RentMateAPI.Data.Models;
 
 public partial class PendingLandlord
 {

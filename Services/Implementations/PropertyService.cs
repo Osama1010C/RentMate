@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using RentMateAPI.Data.Models;
+﻿using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOImage;
 using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.Services.Interfaces;
@@ -128,7 +127,7 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<int> AddAsync(AddPropertyDto propertyDto, PropertyImagesDto imagesDto)
         {
-            // 1. Validate landlord exists
+            
             var landlord = await _unitOfWork.Users.GetByIdAsync(propertyDto.LandlordId);
             if (landlord is null)
                 throw new Exception($"Landlord with Id {propertyDto.LandlordId} not found!");
@@ -139,7 +138,7 @@ namespace RentMateAPI.Services.Implementations
             if(!imagesDto.Images.Any())
                 throw new Exception($"Property must have at least one secondary image!");
 
-            // 2. Read main image into bytes
+            
             byte[]? mainImageBytes = null;
             using (var memoryStream = new MemoryStream())
             {
@@ -147,7 +146,7 @@ namespace RentMateAPI.Services.Implementations
                 mainImageBytes = memoryStream.ToArray();
             }
 
-            // 3. Create Property entity
+            
             var property = new Property
             {
                 LandlordId = propertyDto.LandlordId,
@@ -161,11 +160,11 @@ namespace RentMateAPI.Services.Implementations
                 PropertyApproval = "pending"
             };
 
-            // 4. Add property (first)
+            
             await _unitOfWork.Properties.AddAsync(property);
-            await _unitOfWork.CompleteAsync(); // Save to generate PropertyId
+            await _unitOfWork.CompleteAsync(); 
 
-            // 5. Handle additional property images
+            
             if (imagesDto?.Images != null && imagesDto.Images.Any())
             {
                 foreach (var formFile in imagesDto.Images)
@@ -175,14 +174,14 @@ namespace RentMateAPI.Services.Implementations
 
                     var propertyImage = new PropertyImage
                     {
-                        PropertyId = property.Id, // newly created property ID
+                        PropertyId = property.Id, 
                         Image = memoryStream.ToArray()
                     };
 
                     await _unitOfWork.PropertyImages.AddAsync(propertyImage);
                 }
 
-                await _unitOfWork.CompleteAsync(); // Save all images
+                await _unitOfWork.CompleteAsync(); 
             }
 
             return property.Id;
@@ -191,41 +190,6 @@ namespace RentMateAPI.Services.Implementations
 
 
         
-
-        public async Task ReplaceMainImageAsync(int propertyId, ImageDto image)
-        {
-            var property = await _unitOfWork.Properties.GetByIdAsync(propertyId);
-            if (property is null)
-                throw new Exception($"Property with Id {propertyId} not found!");
-
-
-            byte[]? propertyImage = null;
-
-            // read image
-            using var memoryStream = new MemoryStream();
-
-
-            image.Image.CopyTo(memoryStream);
-            propertyImage = memoryStream.ToArray();
-
-            property.MainImage = propertyImage;
-
-            await _unitOfWork.CompleteAsync();
-        }
-
-        //public async Task UpdateAsync(int propertyId, UpdatedPropertDto propertyDto)
-        //{
-        //    var prop = await _unitOfWork.Properties.GetAsync(p => p.Id == propertyId && p.Status != "rented");
-        //    if (prop is null) throw new Exception($"Property with id : {propertyId} not found or not availble");
-
-
-        //    prop.Title = propertyDto.Title;
-        //    prop.Description = propertyDto.Description;
-        //    prop.Location = propertyDto.Location;
-        //    prop.Price = propertyDto.Price;
-
-        //    await _unitOfWork.CompleteAsync();
-        //}
 
         public async Task UpdatePropertyAsync(int propertyId, UpdatedPropertDto propertyDto, ImageDto? image = null)
         {
@@ -299,12 +263,19 @@ namespace RentMateAPI.Services.Implementations
             await _unitOfWork.CompleteAsync();
         }
 
+
+
+
+
+
         private async Task<bool> IsNewViewAsync(int userId, int propertyId)
         {
             var propertyView = await _unitOfWork.PropertyViews.GetAsync(p => (p.UserId == userId) && (p.PropertyId == propertyId));
 
             return propertyView is null;
         }
+
+
 
         private async Task<List<PropertyImageDto>> GetPropertyImagesAsync(int propertyId)
         {

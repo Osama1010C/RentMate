@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using RentMateAPI.Data.Models;
+﻿using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.DTOModels.DTORent;
 using RentMateAPI.Services.Interfaces;

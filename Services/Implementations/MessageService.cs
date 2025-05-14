@@ -54,7 +54,6 @@ namespace RentMateAPI.Services.Implementations
                 SenderId = senderId,
                 ReceiverId = recieverId,
                 Content = encryptedMessage,
-                //Content = message,
             };
 
 
@@ -71,9 +70,7 @@ namespace RentMateAPI.Services.Implementations
                 Content = message
             };
 
-            // Send real-time message to receiver
-            //await _hubContext.Clients.User(recieverId.ToString())
-            //    .SendAsync("ReceiveMessage", messageDto);
+
             if (ChatHub.UserConnections.TryGetValue(recieverId, out string connectionId))
             {
                 await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveMessage", messageDto);
@@ -97,7 +94,6 @@ namespace RentMateAPI.Services.Implementations
                 SenderName = c.Sender.Name,
                 SentAt = c.SentAt,
                 Content = _dataProtector.Unprotect(c.Content),
-                //Content = c.Content,
             })
             .ToList();
 

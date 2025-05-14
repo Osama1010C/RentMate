@@ -1,6 +1,5 @@
 ﻿using RentMateAPI.DTOModels.DTOComment;
 using RentMateAPI.Services.Interfaces;
-using RentMateAPI.UOF.Implementation;
 using RentMateAPI.UOF.Interface;
 
 namespace RentMateAPI.Services.Implementations

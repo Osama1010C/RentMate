@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentMateAPI.Data;
 using RentMateAPI.Repositories.Interfaces;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace RentMateAPI.Repositories.Implementations

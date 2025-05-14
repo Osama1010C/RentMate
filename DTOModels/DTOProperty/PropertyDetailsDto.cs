@@ -1,6 +1,4 @@
-﻿using RentMateAPI.Data.Models;
-
-namespace RentMateAPI.DTOModels.DTOProperty
+﻿namespace RentMateAPI.DTOModels.DTOProperty
 {
     public class PropertyDetailsDto
     {

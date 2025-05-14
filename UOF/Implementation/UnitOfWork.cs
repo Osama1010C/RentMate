@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RentMateAPI.Data;
+﻿using RentMateAPI.Data;
 using RentMateAPI.Data.Models;
 using RentMateAPI.Repositories.Implementations;
 using RentMateAPI.Repositories.Interfaces;

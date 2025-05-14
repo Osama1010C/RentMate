@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-
-namespace RentMateAPI.DTOModels.DTOUser
+﻿namespace RentMateAPI.DTOModels.DTOUser
 {
     public class UserDto
     {

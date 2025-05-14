@@ -60,10 +60,5 @@ namespace RentMateAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> AddUser([FromBody] NewUserDto userDto, string role)
-        //    => Ok(await _userService.AddUserAsync(userDto, role));
-
     }
 }

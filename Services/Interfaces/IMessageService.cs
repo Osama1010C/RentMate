@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RentMateAPI.DTOModels.DTOMessage;
+﻿using RentMateAPI.DTOModels.DTOMessage;
 
 namespace RentMateAPI.Services.Interfaces
 {

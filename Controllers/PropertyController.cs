@@ -73,7 +73,7 @@ namespace RentMateAPI.Controllers
 
 
         [HttpPost("AddPropertyImage")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> AddPropertyImage(int propertyId, [FromForm] AddPropertyImageDto propertyImageDto)
         {
             try
@@ -89,40 +89,8 @@ namespace RentMateAPI.Controllers
 
 
 
-        //[HttpPut("ReplacePropertyMainImage/{propertyId}")]
-        //[Authorize(Roles = "landlord")]
-        //public async Task<IActionResult> ReplacePropertyMainImage(int propertyId, [FromForm] ImageDto image)
-        //{
-        //    try
-        //    {
-        //        await _propertyService.ReplaceMainImageAsync(propertyId, image);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return NotFound(ex.Message);
-        //    }
-        //}
-
-
-
-
-        //[HttpPut("Update/{propertyId}")]
-        //[Authorize(Roles = "landlord")]
-        //public async Task<IActionResult> UpdateProperty(int propertyId, [FromBody] UpdatedPropertDto propertyDto)
-        //{
-        //    try
-        //    {
-        //        await _propertyService.UpdateAsync(propertyId, propertyDto);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return NotFound(ex.Message);
-        //    }
-        //}
         [HttpPut("Update/{propertyId}")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> UpdateProperty(int propertyId, [FromForm]UpdatedPropertDto propertyDto, [FromForm]ImageDto? image = null)
         {
             try
@@ -153,7 +121,7 @@ namespace RentMateAPI.Controllers
         }
 
         [HttpDelete("DeletePropertyImage/{propertyImageId}")]
-        //[Authorize(Roles = "landlord")]
+        [Authorize(Roles = "landlord")]
         public async Task<IActionResult> DeletePropertyImage(int propertyImageId)
         {
             try

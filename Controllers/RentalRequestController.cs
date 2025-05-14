@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RentMateAPI.Data;
 using RentMateAPI.DTOModels.DTORent;
 using RentMateAPI.Services.Interfaces;
 
@@ -47,20 +45,6 @@ namespace RentMateAPI.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Authorize(Roles = "tenant")]
-        //public async Task<IActionResult> RentProperty([FromForm] RentPropertyDto rentDto)
-        //{
-        //    try
-        //    {
-        //        await _rentalService.RentPropertyAsync(rentDto);
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return NotFound(ex.Message);
-        //    }
-        //}
 
         [HttpPost]
         [Authorize(Roles = "tenant")]

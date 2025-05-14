@@ -8,8 +8,6 @@ namespace RentMateAPI.Services.Interfaces
 
         Task<UserDto> GetUserAsync(int id);
 
-        Task<UserDto> AddUserAsync(NewUserDto userDto, string role);
-
         Task<byte[]> GetUserImageAsync(int userId);
         Task AddImageAsync(UserImageDto userImage);
     }
