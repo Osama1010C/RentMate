@@ -197,7 +197,7 @@ namespace RentMateAPI.Services.Implementations
             if (property is null)
                 throw new Exception($"Property with id: {propertyId} not found or not available");
 
-            // Update only if values are provided
+            
             if (!string.IsNullOrWhiteSpace(propertyDto.Title))
                 property.Title = propertyDto.Title;
 
@@ -210,7 +210,7 @@ namespace RentMateAPI.Services.Implementations
             if (propertyDto.Price.HasValue)
                 property.Price = propertyDto.Price.Value;
 
-            // Handle optional image
+           
             if (image != null && image.Image != null)
             {
                 using var memoryStream = new MemoryStream();

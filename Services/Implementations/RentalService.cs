@@ -107,22 +107,13 @@ namespace RentMateAPI.Services.Implementations
             if (tenant is null) throw new Exception("this tenant id not found");
 
 
-            //var requests = await _unitOfWork.RentalRequests
-            //                .GetAllAsync(r => (r.TenantId == tenantId) && (r.Status == "pending"), includeProperties: "Property");
+            
             var requests = await _unitOfWork.RentalRequests
                             .GetAllAsync(r => (r.TenantId == tenantId) , includeProperties: "Property");
 
             if (requests is null) return new List<PropertyRequestDto>();
 
-            //var requestInfo = requests.Select(r => new TenantRentRequestDto
-            //{
-            //    RentId = r.Id,
-            //    TenantName = r.Tenant.Name,
-            //    PropertyTitle = r.Property.Title,
-            //    RentStatus = r.Status,
-            //    PropertyMainImage = r.Property.MainImage,
-            //    CreateAt = r.CreateAt,
-            //});
+            
             var requestInfo = requests.Select(r =>
             {
                 var landlordName = _unitOfWork.Users.GetByIdAsync(r.Property.LandlordId).Result!.Name;
@@ -168,12 +159,7 @@ namespace RentMateAPI.Services.Implementations
 
                 if (request.Status == "pending")
                     _unitOfWork.RentalRequests.Delete(request.Id);
-                //if (request.Status == "pending")
-                //{
-                //    _unitOfWork.RentalRequests.Delete(request.Id);
-                //    await _unitOfWork.CompleteAsync();
-                //    return;
-                //}
+                
             }
 
             var property = await _unitOfWork.Properties

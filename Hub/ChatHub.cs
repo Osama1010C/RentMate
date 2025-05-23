@@ -8,7 +8,7 @@ public class ChatHub : Hub
     {
         var httpContext = Context.GetHttpContext();
         var userIdString = httpContext?.Request.Query["userId"];
-
+        
         if (int.TryParse(userIdString, out int userId))
         {
             UserConnections[userId] = Context.ConnectionId;

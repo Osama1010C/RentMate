@@ -74,6 +74,84 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "RentMateAPI.Controllers.AuthController",
+    "Method": "GetLandlordRegistrationRequests",
+    "RelativePath": "RentMate/Auth/LandlordsRequests",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RentMateAPI.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "RentMate/Auth/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "password",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RentMateAPI.Controllers.AuthController",
+    "Method": "Logout",
+    "RelativePath": "RentMate/Auth/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RentMateAPI.Controllers.AuthController",
+    "Method": "RefreshToken",
+    "RelativePath": "RentMate/Auth/refresh",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "RentMateAPI.DTOModels.DTOToken.RefreshTokenDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "RentMateAPI.Controllers.AuthController",
+    "Method": "Register",
+    "RelativePath": "RentMate/Auth/Register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userDto",
+        "Type": "RentMateAPI.DTOModels.DTOUser.NewUserDto",
+        "IsRequired": true
+      },
+      {
+        "Name": "role",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "RentMateAPI.Controllers.CommentController",
     "Method": "AddComment",
     "RelativePath": "RentMate/Comment",

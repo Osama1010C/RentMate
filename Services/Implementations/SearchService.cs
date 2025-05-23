@@ -28,7 +28,6 @@ namespace RentMateAPI.Services.Implementations
                 (!fromPrice.HasValue || p.Price >= fromPrice.Value) &&
                 (!toPrice.HasValue || p.Price <= toPrice.Value) &&
                 p.Status == "available"
-                //p.PropertyApproval == "accepted"
                 , includeProperties: "Landlord"
             );
 

@@ -6,7 +6,7 @@ namespace RentMateAPI.Controllers
 {
     [Route("RentMate/[controller]")]
     [ApiController]
-    [Authorize(Roles = "tenant,landlord")]
+    
 
     public class SearchController : ControllerBase
     {

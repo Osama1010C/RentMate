@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RentMateAPI.Services.Implementations;
 using RentMateAPI.Data;
 using RentMateAPI.Extensions;
 using System.Text;
@@ -14,28 +15,41 @@ namespace RentMateAPI
             var builder = WebApplication.CreateBuilder(args);
 
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowLocalhost3000",
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:3000")
-                               .AllowAnyHeader()
-                               .AllowAnyMethod()
-                               .AllowCredentials();
-                    });
-            });
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowLocalhost3000",
+            //        builder =>
+            //        {
+            //            builder.WithOrigins("http://localhost:3000")
+            //                   .AllowAnyHeader()
+            //                   .AllowAnyMethod()
+            //                   .AllowCredentials();
+            //        });
+            //});
 
             //builder.Services.AddCors(options =>
             //{
-            //    options.AddPolicy("AllowLocalhost", builder =>
+            //    options.AddPolicy("AllowVercel", builder =>
             //    {
-            //        builder.WithOrigins("http://localhost:3001")
-            //              .AllowAnyMethod()  
+            //        builder.WithOrigins("https://homeless-lovat.vercel.app")
+            //              .AllowAnyMethod()
             //              .AllowAnyHeader()
             //              .AllowCredentials();
             //    });
             //});
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowVercel", builder =>
+                {
+                    builder.WithOrigins(
+                        "https://homeless-lovat.vercel.app",
+                        "http://localhost:3000"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+                });
+            });
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -57,7 +71,9 @@ namespace RentMateAPI
             builder.Services.AddDataProtection();
 
             builder.Services.AddApplicationServices();
+            builder.Services.AddHttpContextAccessor();
 
+            builder.Services.AddScoped<JwtService>();
             var jwtSettings = builder.Configuration.GetSection("JWT");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
 
@@ -84,8 +100,8 @@ namespace RentMateAPI
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(1000);
-                options.Cookie.MaxAge = TimeSpan.FromMinutes(1000);
+                options.IdleTimeout = TimeSpan.FromMinutes(15);
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(15);
                 options.Cookie.HttpOnly = false;
                 options.Cookie.IsEssential = true;
                 options.Cookie.SameSite = SameSiteMode.None; // new line
@@ -95,8 +111,8 @@ namespace RentMateAPI
 
             var app = builder.Build();
 
-            app.UseCors("AllowLocalhost3000");
-            //app.UseCors("AllowLocalhost");
+            //app.UseCors("AllowLocalhost3000");
+            app.UseCors("AllowVercel");
 
             //app.UseStaticFiles();
 
