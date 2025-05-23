@@ -60,14 +60,17 @@ Welcome to the **Property Rental Platform** – a full-stack solution designed t
 
 ---
 
-## 🧩 Requirements
+## 🗂️ Database Schema
 
-- ✅ Real-time communication via sockets (SignalR)
-- ✅ Relational Database Design (DB Schema included)
-- ✅ Secure authentication and role-based access
-- ✅ Modular architecture with extensibility in mind
+Here is the database schema illustrating the relationships between the entities:
+
+![Database Schema](docs/db-schema.png)
 
 ---
+## 🚀 Live Demo — Try it Now!
+Experience the platform in action:  
+- 🌍 **Frontend**: <a href="https://homeless-lovat.vercel.app/" target="_blank" rel="noopener noreferrer">homeless-lovat.vercel.app</a> — Sleek and responsive user interface for tenants and landlords.  
+- ⚙️ **API Swagger**: <a href="http://rentmate.runasp.net/swagger" target="_blank" rel="noopener noreferrer">rentmate.runasp.net/swagger</a> — Fully documented and testable REST API.
 
-Feel free to fork, star, and contribute! ⭐  
-Let's make renting simple and efficient! 💪
+> 💡 Explore available properties, register as a landlord, or dive into the API right from your browser!
+
