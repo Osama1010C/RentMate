@@ -60,12 +60,11 @@ Welcome to the **Property Rental Platform** – a full-stack solution designed t
 
 ---
 
-## 🧩 Requirements
+## 🗂️ Database Schema
 
-- ✅ Real-time communication via sockets (SignalR)
-- ✅ Relational Database Design (DB Schema included)
-- ✅ Secure authentication and role-based access
-- ✅ Modular architecture with extensibility in mind
+Here is the database schema illustrating the relationships between the entities:
+
+![Database Schema](docs/db-schema.png)
 
 ---
 ## 🚀 Live Demo — Try it Now!
