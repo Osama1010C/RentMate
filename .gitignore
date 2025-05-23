@@ -1,0 +1,11 @@
+# Ignore these folders
+.config/
+Properties/
+bin/
+obj/
+
+# Ignore these files
+RentMateAPI.csproj
+RentMateAPI.csproj.user
+RentMateAPI.http
+appsettings.Development.json
