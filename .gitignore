@@ -10,3 +10,4 @@ RentMateAPI.csproj.user
 RentMateAPI.http
 appsettings.Development.json
 appsettings.json
+appsettingsTemplate.Development.json
