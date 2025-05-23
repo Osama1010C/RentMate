@@ -38,9 +38,9 @@ public partial class AppDbContext : DbContext
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 //        => optionsBuilder.UseSqlServer("Server = DESKTOP-TI3609O\\SQLEXPRESS ; Database = RentMate ; Integrated Security = SSPI ; TrustServerCertificate = True");
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=SQL6032.site4now.net;Initial Catalog=db_ab8220_rentmatedbproject0;User Id=db_ab8220_rentmatedbproject0_admin;Password=zN9ksQSfN#5RP.m");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Data Source=SQL6032.site4now.net;Initial Catalog=db_ab8220_rentmatedbproject0;User Id=db_ab8220_rentmatedbproject0_admin;Password=zN9ksQSfN#5RP.m");
 
 
 
