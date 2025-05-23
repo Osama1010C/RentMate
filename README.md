@@ -3,6 +3,11 @@
 
 Welcome to the **Property Rental Platform** – a full-stack solution designed to seamlessly connect **Landlords** 🧑‍💼 and **Tenants** 👨‍💻, with **Admins** 🛡️ managing the ecosystem. From listing properties to real-time chat and rental proposals, this system streamlines property rentals with ease and efficiency.
 
+### 👥 Collaborator
+
+- 🧑‍💻 **GitHub**: <a href="https://github.com/Islam25x" target="_blank" rel="noopener noreferrer">Islam Salah</a> — Frontend developer  
+- 📂 **Project Repository**: <a href="https://github.com/Islam25x/homeless" target="_blank" rel="noopener noreferrer">Homless Repo</a> — Source code.
+
 ## 🚀 Live Demo — Try it Now!
 Experience the platform in action:  
 - 🌍 **Frontend**: <a href="https://homeless-lovat.vercel.app/" target="_blank" rel="noopener noreferrer">Homeless</a> — Sleek and responsive user interface for tenants and landlords.  
@@ -58,12 +63,23 @@ Experience the platform in action:
 
 ## 🛠️ Technologies Used
 
-- **.NET Core** (Web API)
-- **Entity Framework Core** with Scaffolded Reverse Engineering
-- **SignalR** for real-time features
-- **JWT** for secure authentication
-- **Swagger** for API documentation and testing
-- **SQL Server** for data persistence
+### 🔧 Backend Technologies
+
+- ⚙️ **.NET Core** (Web API)
+- 🛠️ **Entity Framework Core** with Scaffolded Reverse Engineering
+- 🔄 **SignalR** for real-time features
+- 🔐 **JWT** for secure authentication
+- 📘 **Swagger** for API documentation and testing
+- 🗄️ **SQL Server** for data persistence
+
+### 🚀 Frontend Technologies
+
+- ⚛️ React + TypeScript
+- 🧠 Redux Toolkit + RTK Query
+- 🎨 Bootstrap (Responsive UI)
+- 🧪 React Testing Library
+- 🖼️ Image Upload + Preview (Base64)
+- 🌐 Routing via React Router
 
 ---
 
