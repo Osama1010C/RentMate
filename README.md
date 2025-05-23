@@ -6,7 +6,8 @@ Welcome to the **Property Rental Platform** – a full-stack solution designed t
 ### 👥 Collaborator
 
 - 🧑‍💻 **GitHub**: <a href="https://github.com/Islam25x" target="_blank" rel="noopener noreferrer">Islam Salah</a> — Frontend developer  
-- 📂 **Project Repository**: <a href="https://github.com/Islam25x/homeless" target="_blank" rel="noopener noreferrer">Homless Repo</a> — Source code.
+- 📂 **Frontend Project Repository**: <a href="https://github.com/Islam25x/homeless" target="_blank" rel="noopener noreferrer">Homless Repo</a> — Source code.
+
 
 ## 🚀 Live Demo — Try it Now!
 Experience the platform in action:  
