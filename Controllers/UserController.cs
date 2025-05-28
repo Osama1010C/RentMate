@@ -7,7 +7,7 @@ namespace RentMateAPI.Controllers
 {
     [Route("RentMate/[controller]")]
     [ApiController]
-    [Authorize(Roles ="admin,landlord,tenant")]
+    
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -17,10 +17,12 @@ namespace RentMateAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> GetAllUsers() => Ok(await _userService.GetAllUsersAsync());
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> GetUser(int id)
         {
             try
@@ -34,7 +36,26 @@ namespace RentMateAPI.Controllers
             }
         }
 
+
+
+        [HttpGet("Statistics")]
+        public async Task<IActionResult> GetStatistics()
+        {
+            try
+            {
+                var statistics = await _userService.GetStatisticsAsync();
+                return Ok(statistics);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
+
         [HttpGet("{id}/image")]
+        [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> GetUserImage(int id)
         {
             try
@@ -47,7 +68,10 @@ namespace RentMateAPI.Controllers
                 return NotFound(ex.Message);
             }
         }
+
+
         [HttpPost("image")]
+        [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> AddUserImage([FromForm]UserImageDto user)
         {
             try

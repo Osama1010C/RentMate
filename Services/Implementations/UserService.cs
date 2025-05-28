@@ -1,4 +1,5 @@
-﻿using RentMateAPI.DTOModels.DTOUser;
+﻿using RentMateAPI.DTOModels.DTODashboard;
+using RentMateAPI.DTOModels.DTOUser;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
 using System.Data;
@@ -51,6 +52,33 @@ namespace RentMateAPI.Services.Implementations
             return dtoUser;
         }
 
+        public async Task<StatisticsDto> GetStatisticsAsync()
+        {
+            var users = await _unitOfWork.Users.GetAllAsync();
+            var numOfUsers = users.Count();
+            var numOfAdmins = users.Count(u => u.Role == "admin");
+            var numOfTenants = users.Count(u => u.Role == "tenant");
+            var numOfLandlords = users.Count(u => u.Role == "landlord");
+
+            var pendingLandlordsList = await _unitOfWork.PendingLandlord.GetAllAsync();
+            var numOfpendingLandlords = pendingLandlordsList.Count();
+
+            var properties = await _unitOfWork.Properties.GetAllAsync();
+            var numOfProperties = properties.Count(p => p.PropertyApproval == "accepted");
+            var numOfPendingProperties = properties.Count(p => p.PropertyApproval == "pending");
+
+
+            var statistics = new StatisticsDto
+            {
+                NumberOfUsers = numOfUsers,
+                NumberOfTenants = numOfTenants,
+                NumberOfLandlords = numOfLandlords,
+                NumberOfProperties = numOfProperties,
+            };
+
+            return statistics;
+        }
+
         public async Task<byte[]> GetUserImageAsync(int userId)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
@@ -73,5 +101,7 @@ namespace RentMateAPI.Services.Implementations
             user!.Image = mainImageBytes;
             await _unitOfWork.CompleteAsync();
         }
+
+        
     }
 }
