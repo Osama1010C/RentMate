@@ -72,7 +72,7 @@ namespace RentMateAPI.Services.Implementations
             {
                 UserId = GetAdminId().Result,
                 Description = $"Property post {post.Title} has been Accepted",
-                HistoryType = "Property Action"
+                HistoryType = "Property Action",
             });
 
             await _notificationService.AddNotificationAsync((int)post.LandlordId!, new AddNotificationDto

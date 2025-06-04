@@ -76,7 +76,8 @@ namespace RentMateAPI.Services.Implementations
             return history.Select(h => new GetHistoryDto
             {
                 Description = h.Description,
-                HistoryType = h.HistoryType
+                HistoryType = h.HistoryType,
+                ActionDate = h.ActionDate
             })
                 .OrderByDescending(h => h.ActionDate)
                 .ToList();
