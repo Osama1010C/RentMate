@@ -4,7 +4,7 @@ namespace RentMateAPI.DTOModels.DTOToken
 {
     public class AuthModelDto
     {
-        [JsonIgnore]
+        
         public int Id { get; set; }
         public bool IsAuthenticated { get; set; }
         //public string Username { get; set; } = null!;

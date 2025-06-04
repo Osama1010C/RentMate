@@ -5,7 +5,7 @@ namespace RentMateAPI.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<List<User>> GetAllAsync();
+        //Task<List<User>> GetAllAsync();
 
         Task<AuthModelDto> RegistAsync(User tenant);
 

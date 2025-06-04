@@ -1,4 +1,7 @@
-﻿namespace RentMateAPI.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace RentMateAPI.Data.Models;
 
 public partial class PropertyImage
 {

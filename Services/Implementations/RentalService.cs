@@ -1,4 +1,6 @@
 ﻿using RentMateAPI.Data.Models;
+using RentMateAPI.DTOModels.DTOMessage;
+using RentMateAPI.DTOModels.DTONotification;
 using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.DTOModels.DTORent;
 using RentMateAPI.Services.Interfaces;
@@ -9,9 +11,11 @@ namespace RentMateAPI.Services.Implementations
     public class RentalService : IRentalService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public RentalService(IUnitOfWork unitOfWork)
+        private readonly INotificationService _notificationService;
+        public RentalService(IUnitOfWork unitOfWork, INotificationService notificationService)
         {
-            _unitOfWork = unitOfWork; 
+            _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
         }
         public async Task AcceptRequestAsync(int requestId)
         {
@@ -29,6 +33,14 @@ namespace RentMateAPI.Services.Implementations
 
             property!.Status = "rented";
 
+            var notificationDto = new AddNotificationDto
+            {
+                Description = $"Your request for the property '{property.Title}' has been Accepted",
+                NotificationType = "rent request",
+                NotificationTypeId = property.Id
+            };
+            await _notificationService.AddNotificationAsync(request.TenantId, notificationDto);
+
             // add this property to tenantProperty table
             var tenantProperty = new TenantProperty
             {
@@ -42,7 +54,17 @@ namespace RentMateAPI.Services.Implementations
             var garbageRequests = rentalRequests.Where(x => x.Id != requestId && x.PropertyId == property.Id).ToList();
 
             foreach (var garbage in garbageRequests)
+            {
                 garbage.Status = "rejected";
+                var notificationRejectDto = new AddNotificationDto
+                {
+                    Description = $"Your request for the property '{property.Title}' has been Rejected",
+                    NotificationType = "rent request",
+                    NotificationTypeId = property.Id
+                };
+                await _notificationService.AddNotificationAsync(garbage.TenantId, notificationRejectDto);
+            }
+                
 
             await _unitOfWork.CompleteAsync();
         }
@@ -59,6 +81,17 @@ namespace RentMateAPI.Services.Implementations
 
 
             request.Status = "rejected";
+
+            var property = await _unitOfWork.Properties.GetByIdAsync(request.PropertyId);
+
+
+            var notificationRejectDto = new AddNotificationDto
+            {
+                Description = $"Your request for the property '{property!.Title}' has been Rejected",
+                NotificationType = "rent request",
+                NotificationTypeId = property.Id
+            };
+            await _notificationService.AddNotificationAsync(request.TenantId, notificationRejectDto);
 
             await _unitOfWork.CompleteAsync();
         }
@@ -188,6 +221,13 @@ namespace RentMateAPI.Services.Implementations
                 CreateAt = DateTime.Now,
                 Status = "pending"
             });
+            var notificationDto = new AddNotificationDto
+            {
+                Description = $"A new rental request for your property '{property.Title}'",
+                NotificationType = "rent request",
+                NotificationTypeId = property.Id
+            };
+            await _notificationService.AddNotificationAsync((int)property.LandlordId!, notificationDto);
 
             await _unitOfWork.CompleteAsync();
         }
@@ -207,7 +247,19 @@ namespace RentMateAPI.Services.Implementations
             if (request is null)
                 throw new Exception("this request is not found");
 
+
+
+            
+            
             _unitOfWork.RentalRequests.Delete(request.Id);
+
+            var property = await _unitOfWork.Properties
+                                .GetAsync(p => p.Id == propertyId);
+
+            var notification = _unitOfWork.Notifications.GetAsync(n => n.UserId == tenantId &&
+                                n.Description == $"A new rental request for your property '{property.Title}'");
+            _unitOfWork.Notifications.Delete(notification.Id);
+
             await _unitOfWork.CompleteAsync();
         }
 

@@ -32,7 +32,7 @@ namespace RentMateAPI.Services.Implementations
             );
 
 
-            
+
 
             var propertyDtos = properties.Select(p =>
             {

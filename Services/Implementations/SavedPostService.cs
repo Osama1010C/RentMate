@@ -13,12 +13,12 @@ namespace RentMateAPI.Services.Implementations
         }
         public async Task<List<PropertyDto>> GetAllSavedAsync(int tenantId)
         {
-            
+
             var tenant = await _unitOfWork.Users.GetByIdAsync(tenantId);
 
             if (tenant is null) throw new Exception("this tenant id not found");
 
-            
+
 
             var savedPosts = await _unitOfWork.SavedPosts.GetAllAsync(sp => sp.TenantId == tenantId, includeProperties: "Property");
 

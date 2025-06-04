@@ -16,7 +16,7 @@ namespace RentMateAPI.Services.Implementations
         {
             if (!await IsExistAsync(userId, propertyId))
                 throw new Exception("this user or property id not found");
-            
+
             await _unitOfWork.Comments.AddAsync(new()
             {
                 UserId = userId,
@@ -54,7 +54,7 @@ namespace RentMateAPI.Services.Implementations
         private async Task<bool> IsExistAsync(int userId, int propertyId)
         {
             var isUserExist = await _unitOfWork.Users.IsExistAsync(userId);
-            
+
             var isPropertyExist = await _unitOfWork.Properties.IsExistAsync(propertyId);
 
             return isUserExist && isPropertyExist;

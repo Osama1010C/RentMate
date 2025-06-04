@@ -1,6 +1,5 @@
 ﻿using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOToken;
-using RentMateAPI.Repositories.Interfaces;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,18 +8,16 @@ namespace RentMateAPI.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-        //private readonly IUserRepository _userRepository;
-        //private readonly IPendingLandlordRepository _pendingLandlordRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         private readonly JwtService _jwtService;
         public AuthService(IUnitOfWork unitOfWork, JwtService jwtService)
         {
-            //_userRepository = userRepository;
             _jwtService = jwtService;
-            //_pendingLandlordRepository = pendingLandlordRepository;
             _unitOfWork = unitOfWork;
         }
+
+
         public async Task<AuthModelDto> RegistAsync(User tenant)
         {
             bool isAlreadyExist = false;
@@ -28,10 +25,9 @@ namespace RentMateAPI.Services.Implementations
             
             var hashedPassword = BC.EnhancedHashPassword(tenant.Password);
 
-            //var users = await _userRepository.GetAllAsync();
-            //var pendings = await _pendingLandlordRepository.GetAllAsync();
             var users = await _unitOfWork.Users.GetAllAsync();
             var pendings = await _unitOfWork.PendingLandlord.GetAllAsync();
+
 
             isAlreadyExist = users.Any(u => u.Name == tenant.Name || u.Email == tenant.Email || BC.EnhancedVerify(tenant.Password, u.Password));
             isAlreadyExistInPendings = pendings.Any(p => p.Name == tenant.Name || p.Email == tenant.Email || BC.EnhancedVerify(tenant.Password, p.Password));
@@ -47,8 +43,6 @@ namespace RentMateAPI.Services.Implementations
                 Role = "tenant"
             };
 
-            //await _userRepository.AddAsync(newUser);
-            //await _userRepository.SaveChangesAsync();
             await _unitOfWork.Users.AddAsync(newUser);
             await _unitOfWork.CompleteAsync();
 
@@ -73,7 +67,6 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<AuthModelDto> LoginAsync(string name, string password)
         {
-            //var users = await _userRepository.GetAllAsync();
             var users = await _unitOfWork.Users.GetAllAsync();
 
             var isAuthorized = users.Any(u => u.Name == name && BC.EnhancedVerify(password, u.Password));
@@ -99,7 +92,7 @@ namespace RentMateAPI.Services.Implementations
             };
         }
 
-        public async Task<List<User>> GetAllAsync() => await _unitOfWork.Users.GetAllAsync();
+        //public async Task<List<User>> GetAllAsync() => await _unitOfWork.Users.GetAllAsync();
 
     }
 }

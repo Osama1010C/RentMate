@@ -21,6 +21,8 @@ namespace RentMateAPI.Extensions
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPendingLandlordService, PendingLandlordService>();
+            services.AddScoped<IHistoryService, HistoryService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }

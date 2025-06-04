@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOMessage;
+using RentMateAPI.DTOModels.DTONotification;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
 
@@ -35,11 +36,15 @@ namespace RentMateAPI.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly IDataProtector _dataProtector;
-        public MessageService(IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext, IDataProtectionProvider dataProtectionProvider, IConfiguration configuration)
+        private readonly INotificationService _notificationService;
+        public MessageService(IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext,
+            IDataProtectionProvider dataProtectionProvider, IConfiguration configuration,
+            INotificationService notificationService)
         {
-            this._unitOfWork = unitOfWork;
-            this._hubContext = hubContext;
-            this._dataProtector = dataProtectionProvider.CreateProtector(configuration["SecretKey"]!);
+            _unitOfWork = unitOfWork;
+            _hubContext = hubContext;
+            _dataProtector = dataProtectionProvider.CreateProtector(configuration["SecretKey"]!);
+            _notificationService = notificationService;
         }
 
         public async Task AddMessageAsync(int senderId, int recieverId, string message)
@@ -75,6 +80,19 @@ namespace RentMateAPI.Services.Implementations
             {
                 await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveMessage", messageDto);
             }
+
+            var IsMessagedBefore = await IsMessagedBeforeInNotification(messageDto.SenderName, recieverId);
+            if (!IsMessagedBefore)
+            {
+                var notificationDto = new AddNotificationDto
+                {
+                    Description = $"{messageDto.SenderName} sent you a message",
+                    NotificationType = "Message",
+                    NotificationTypeId = msg.SenderId
+                };
+                await _notificationService.AddNotificationAsync(recieverId, notificationDto);
+
+            }
         }
 
         public async Task<List<MessageDto>> GetChatContentAsync(int userId, int recieverId)
@@ -103,7 +121,7 @@ namespace RentMateAPI.Services.Implementations
         public async Task<List<SenderDto>> GetMyChatsAsync(int userId)
         {
 
-            if(!await _unitOfWork.Users.IsExistAsync(userId))
+            if (!await _unitOfWork.Users.IsExistAsync(userId))
                 throw new Exception("this user id not found");
 
 
@@ -149,6 +167,12 @@ namespace RentMateAPI.Services.Implementations
             bool isReceiverExist = users.Any(u => u.Id == receiverId);
 
             return isSenderExist && isReceiverExist;
+        }
+
+        private async Task<bool> IsMessagedBeforeInNotification(string SenderName,int recieverId)
+        {
+            var notifications =  await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == recieverId && n.NotificationType == "Message");
+            return notifications.Any(n => n.Description.Contains(SenderName));
         }
     }
 }

@@ -19,6 +19,8 @@ namespace RentMateAPI.UOF.Implementation
         public IRepository<SavedPost> SavedPosts { get; }
         public IRepository<PropertyView> PropertyViews { get; }
         public IRepository<PropertyImage> PropertyImages { get; }
+        public IRepository<History> Histories { get; }
+        public IRepository<Notification> Notifications { get; }
 
         public UnitOfWork(AppDbContext db)
         {
@@ -33,6 +35,8 @@ namespace RentMateAPI.UOF.Implementation
             SavedPosts = new Repository<SavedPost>(_db);
             PropertyViews = new Repository<PropertyView>(_db);
             PropertyImages = new Repository<PropertyImage>(_db);
+            Histories = new Repository<History>(_db);
+            Notifications = new Repository<Notification>(_db);
         }
 
         public async Task<int> CompleteAsync() => await _db.SaveChangesAsync();

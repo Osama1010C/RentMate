@@ -5,7 +5,6 @@ using RentMateAPI.DTOModels.DTOToken;
 using RentMateAPI.Services.Implementations;
 using RentMateAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
-using RentMateAPI.DTOModels.DTOToken;
 
 
 namespace RentMateAPI.Controllers
@@ -114,8 +113,8 @@ namespace RentMateAPI.Controllers
             }
             catch (Exception ex)
             {
-                HttpContext.Session.Clear();
-                Response.Cookies.Delete(".AspNetCore.Session");
+                //HttpContext.Session.Clear();
+                //Response.Cookies.Delete(".AspNetCore.Session");
                 return Ok(new { message = "Logged out successfully." });
             }
 

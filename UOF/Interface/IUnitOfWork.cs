@@ -16,6 +16,8 @@ namespace RentMateAPI.UOF.Interface
         IRepository<SavedPost> SavedPosts { get; }
         IRepository<PropertyView> PropertyViews { get; }
         IRepository<PropertyImage> PropertyImages { get; }
+        IRepository<History> Histories { get; }
+        IRepository<Notification> Notifications { get; }
 
         Task<int> CompleteAsync();
     }

@@ -15,28 +15,7 @@ namespace RentMateAPI
             var builder = WebApplication.CreateBuilder(args);
 
 
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowLocalhost3000",
-            //        builder =>
-            //        {
-            //            builder.WithOrigins("http://localhost:3000")
-            //                   .AllowAnyHeader()
-            //                   .AllowAnyMethod()
-            //                   .AllowCredentials();
-            //        });
-            //});
 
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowVercel", builder =>
-            //    {
-            //        builder.WithOrigins("https://homeless-lovat.vercel.app")
-            //              .AllowAnyMethod()
-            //              .AllowAnyHeader()
-            //              .AllowCredentials();
-            //    });
-            //});
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowVercel", builder =>
@@ -111,7 +90,6 @@ namespace RentMateAPI
 
             var app = builder.Build();
 
-            //app.UseCors("AllowLocalhost3000");
             app.UseCors("AllowVercel");
 
             //app.UseStaticFiles();
@@ -121,7 +99,7 @@ namespace RentMateAPI
             //{
             app.UseSwagger();
             app.UseSwaggerUI();
-            
+
             //}
 
             app.UseHttpsRedirection();
@@ -130,6 +108,7 @@ namespace RentMateAPI
             app.UseAuthorization();
 
             app.MapHub<ChatHub>("/chathub");
+            app.MapHub<NotificationHub>("/notificationhub");
 
             app.MapControllers();
 

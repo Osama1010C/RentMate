@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using RentMateAPI.Data.Models;
 
 namespace RentMateAPI.Data;
@@ -16,7 +18,11 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Comment> Comments { get; set; }
 
+    public virtual DbSet<History> Histories { get; set; }
+
     public virtual DbSet<Message> Messages { get; set; }
+
+    public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<PendingLandlord> PendingLandlords { get; set; }
 
@@ -33,9 +39,6 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<TenantProperty> TenantProperties { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-
-
-
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -59,6 +62,19 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("FK__Comments__UserId__71D1E811");
         });
 
+        modelBuilder.Entity<History>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__History__3214EC07634D9BAB");
+
+            entity.ToTable("History");
+
+            entity.Property(e => e.ActionDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.HistoryType).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<Message>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Messages__3214EC07703CDAE4");
@@ -76,6 +92,17 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.SenderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Messages__Sender__6D0D32F4");
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC07DFE2975D");
+
+            entity.Property(e => e.ActionDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.NotificationType).HasMaxLength(100);
         });
 
         modelBuilder.Entity<PendingLandlord>(entity =>
