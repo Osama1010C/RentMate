@@ -8,5 +8,7 @@ namespace RentMateAPI.Services.Interfaces
         Task<List<GetHistoryDto>> GetLandlordsRegistrationHistoryAsync();
         Task AddPropertyHistoryAsync(AddHistoryDto historyDto);
         Task AddLandlordsRegistrationHistoryAsync(AddHistoryDto historyDto);
+        Task DeletePropertyHistory();
+        Task DeleteLandlordsRegistrationHistory();
     }
 }

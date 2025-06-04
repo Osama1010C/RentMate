@@ -23,6 +23,21 @@ namespace RentMateAPI.Controllers
         [HttpGet("RegistrationsHistory")]
         public async Task<IActionResult> GetRegistrationLandlordsHistory()
             => Ok(await _historyService.GetLandlordsRegistrationHistoryAsync());
-        
+
+
+        [HttpDelete("PropertiesHistory")]
+        public async Task<IActionResult> DeletePropertiesHistory()
+        {
+            await _historyService.DeletePropertyHistory();
+            return Ok();
+        }
+
+        [HttpDelete("RegistrationsHistory")]
+        public async Task<IActionResult> DeleteRegistrationLandlordsHistory()
+        {
+            await _historyService.DeleteLandlordsRegistrationHistory();
+            return Ok();
+        }
+
     }
 }
