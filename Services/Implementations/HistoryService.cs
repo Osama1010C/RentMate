@@ -64,6 +64,7 @@ namespace RentMateAPI.Services.Implementations
                 Description = h.Description,
                 HistoryType = h.HistoryType,
                 ActionDate = h.ActionDate,
+                ActionType = h.Description.Contains("Accepted") ? "Accept" : "Reject"
             })
                 .OrderByDescending(h => h.ActionDate)
                 .ToList();
@@ -77,7 +78,8 @@ namespace RentMateAPI.Services.Implementations
             {
                 Description = h.Description,
                 HistoryType = h.HistoryType,
-                ActionDate = h.ActionDate
+                ActionDate = h.ActionDate,
+                ActionType = h.Description.Contains("Accepted") ? "Accept" : "Reject"
             })
                 .OrderByDescending(h => h.ActionDate)
                 .ToList();

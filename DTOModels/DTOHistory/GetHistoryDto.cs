@@ -4,6 +4,7 @@
     {
         public string Description { get; set; } = null!;
         public string HistoryType { get; set; } = null!;
+        public string ActionType { get; set; } = null!;
         public DateTime? ActionDate { get; set; }
 
     }
