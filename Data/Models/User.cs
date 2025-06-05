@@ -19,9 +19,13 @@ public partial class User
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
+    public virtual ICollection<History> Histories { get; set; } = new List<History>();
+
     public virtual ICollection<Message> MessageReceivers { get; set; } = new List<Message>();
 
     public virtual ICollection<Message> MessageSenders { get; set; } = new List<Message>();
+
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public virtual ICollection<Property> Properties { get; set; } = new List<Property>();
 

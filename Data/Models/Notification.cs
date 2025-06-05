@@ -1,4 +1,7 @@
-﻿namespace RentMateAPI.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace RentMateAPI.Data.Models;
 
 public partial class Notification
 {
@@ -13,4 +16,6 @@ public partial class Notification
     public int NotificationTypeId { get; set; }
 
     public DateTime? ActionDate { get; set; }
+
+    public virtual User User { get; set; } = null!;
 }

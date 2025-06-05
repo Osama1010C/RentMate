@@ -14,4 +14,6 @@ public partial class History
     public string HistoryType { get; set; } = null!;
 
     public DateTime? ActionDate { get; set; }
+
+    public virtual User User { get; set; } = null!;
 }

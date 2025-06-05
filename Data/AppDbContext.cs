@@ -45,7 +45,7 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.Entity<Comment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Comments__3214EC075CAD5CD1");
+            entity.HasKey(e => e.Id).HasName("PK__Comments__3214EC07E76F03CB");
 
             entity.Property(e => e.Content).HasColumnType("text");
             entity.Property(e => e.CreateAt)
@@ -64,7 +64,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<History>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__History__3214EC07634D9BAB");
+            entity.HasKey(e => e.Id).HasName("PK__History__3214EC07C35AA553");
 
             entity.ToTable("History");
 
@@ -73,11 +73,16 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.HistoryType).HasMaxLength(50);
+
+            entity.HasOne(d => d.User).WithMany(p => p.Histories)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__History__UserId__76969D2E");
         });
 
         modelBuilder.Entity<Message>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Messages__3214EC07703CDAE4");
+            entity.HasKey(e => e.Id).HasName("PK__Messages__3214EC07881E4D15");
 
             entity.Property(e => e.Content).HasColumnType("text");
             entity.Property(e => e.SentAt)
@@ -96,18 +101,23 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC07DFE2975D");
+            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC070184E581");
 
             entity.Property(e => e.ActionDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.NotificationType).HasMaxLength(100);
+
+            entity.HasOne(d => d.User).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Notificat__UserI__7A672E12");
         });
 
         modelBuilder.Entity<PendingLandlord>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PendingL__3214EC07D10F6403");
+            entity.HasKey(e => e.Id).HasName("PK__PendingL__3214EC07A8F84D50");
 
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Image).HasDefaultValueSql("(NULL)");
@@ -117,7 +127,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Property>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Properti__3214EC077C8E47B5");
+            entity.HasKey(e => e.Id).HasName("PK__Properti__3214EC07D014B02B");
 
             entity.Property(e => e.CreateAt)
                 .HasDefaultValueSql("(getdate())")
@@ -143,7 +153,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<PropertyImage>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Property__3214EC07DDD21280");
+            entity.HasKey(e => e.Id).HasName("PK__Property__3214EC072BED319B");
 
             entity.HasOne(d => d.Property).WithMany(p => p.PropertyImages)
                 .HasForeignKey(d => d.PropertyId)
@@ -152,7 +162,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<PropertyView>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Property__3214EC070D2ED0B1");
+            entity.HasKey(e => e.Id).HasName("PK__Property__3214EC076E99F243");
 
             entity.HasOne(d => d.Property).WithMany(p => p.PropertyViews)
                 .HasForeignKey(d => d.PropertyId)
@@ -166,7 +176,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<RentalRequest>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RentalRe__3214EC074127494F");
+            entity.HasKey(e => e.Id).HasName("PK__RentalRe__3214EC0781075928");
 
             entity.ToTable("RentalRequest");
 
@@ -188,7 +198,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<SavedPost>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__SavedPos__3214EC07C08CF2FE");
+            entity.HasKey(e => e.Id).HasName("PK__SavedPos__3214EC07DD26B092");
 
             entity.HasOne(d => d.Property).WithMany(p => p.SavedPosts)
                 .HasForeignKey(d => d.PropertyId)
@@ -201,7 +211,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<TenantProperty>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__TenantPr__3214EC07DFE152C4");
+            entity.HasKey(e => e.Id).HasName("PK__TenantPr__3214EC07750AF088");
 
             entity.HasOne(d => d.Property).WithMany(p => p.TenantProperties)
                 .HasForeignKey(d => d.PropertyId)
@@ -214,7 +224,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC07C2651A8D");
+            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC0750E5EF69");
 
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Image).HasDefaultValueSql("(NULL)");
