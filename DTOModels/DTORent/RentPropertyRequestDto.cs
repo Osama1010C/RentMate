@@ -3,7 +3,10 @@
     public class RentPropertyRequestDto
     {
         public int RentId { get; set; }
+
         public string TenantName { get; set; } = null!;
+
+        public byte[]? TenantImage { get; set; }
 
         public string PropertyTitle { get; set; } = null!;
 

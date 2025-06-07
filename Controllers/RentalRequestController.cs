@@ -31,6 +31,21 @@ namespace RentMateAPI.Controllers
         }
 
 
+        [HttpGet("Requests/{landlordId}/{propertyId}")]
+        [Authorize(Roles = "landlord")]
+        public async Task<IActionResult> GetAllRentingRequestsForProperty(int landlordId, int propertyId)
+        {
+            try
+            {
+                return Ok(await _rentalService.GetAllRequestsAsync(landlordId, propertyId));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
         [HttpGet("MyRentRequests/{tenantId}")]
         [Authorize(Roles = "tenant")]
         public async Task<IActionResult> GetAllTenantRentRequests(int tenantId)

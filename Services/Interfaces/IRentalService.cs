@@ -9,6 +9,7 @@ namespace RentMateAPI.Services.Interfaces
         Task RejectRequestAsync(int requestId); 
 
         Task<List<RentPropertyRequestDto>> GetAllRequestsAsync(int landlordId);
+        Task<List<RentPropertyRequestDto>> GetAllRequestsAsync(int landlordId, int propertyId);
         Task<List<PropertyRequestDto>> GetTenantRequestsAsync(int tenantId);
 
         Task RentPropertyAsync(RentPropertyDto rentDto);

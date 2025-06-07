@@ -109,24 +109,90 @@ namespace RentMateAPI.Services.Implementations
 
             if (requests == null) return new List<RentPropertyRequestDto>();
 
-            var requestsInfo = requests.Select(r => new
-            {
-                r.Id,
-                TenantName = r.Tenant.Name,
-                PropertyTitle = r.Property.Title,
-                PropertyMainImage = r.Property.MainImage,
-                r.CreateAt,
-                r.RequirmentDocument
-            }).ToList();
+            //var requestsInfo = requests.Select(r => new
+            //{
+            //    r.Id,
+            //    TenantName = r.Tenant.Name,
+            //    TenantImage = r.Tenant.Image,
+            //    PropertyTitle = r.Property.Title,
+            //    PropertyMainImage = r.Property.MainImage,
+            //    r.CreateAt,
+            //    r.RequirmentDocument
+            //}).ToList();
 
-            
 
-            var result = requestsInfo.Select(r => new RentPropertyRequestDto
+
+            //var result = requestsInfo.Select(r => new RentPropertyRequestDto
+            //{
+            //    RentId = r.Id,
+            //    TenantName = r.TenantName,
+            //    TenantImage = r.TenantImage,
+            //    PropertyTitle = r.PropertyTitle,
+            //    PropertyMainImage = r.PropertyMainImage,
+            //    CreateAt = r.CreateAt,
+            //    RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
+            //}).ToList();
+
+            var result = requests.Select(r => new RentPropertyRequestDto
             {
                 RentId = r.Id,
-                TenantName = r.TenantName,
-                PropertyTitle = r.PropertyTitle,
-                PropertyMainImage = r.PropertyMainImage,
+                TenantName = r.Tenant.Name,
+                TenantImage = r.Tenant.Image,
+                PropertyTitle = r.Property.Title,
+                PropertyMainImage = r.Property.MainImage,
+                CreateAt = r.CreateAt,
+                RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
+            }).ToList();
+
+            return result;
+        }
+
+        public async Task<List<RentPropertyRequestDto>> GetAllRequestsAsync(int landlordId, int propertyId)
+        {
+            if (!await IsExistAsync(landlordId, propertyId))
+                throw new Exception("this landlord id or property id not found");
+
+            var landlord = await _unitOfWork.Users.GetByIdAsync(landlordId);
+
+            //if (landlord == null) throw new Exception("this landlord id not found");
+
+
+            var requests = await _unitOfWork.RentalRequests
+                .GetAllAsync(r => r.PropertyId == propertyId && (r.Property.LandlordId == landlordId) && (r.Status == "pending"), includeProperties: "Property,Tenant");
+
+            if (requests == null) return new List<RentPropertyRequestDto>();
+
+            //var requestsInfo = requests.Select(r => new
+            //{
+            //    r.Id,
+            //    TenantName = r.Tenant.Name,
+            //    TenantImage = r.Tenant.Image,
+            //    PropertyTitle = r.Property.Title,
+            //    PropertyMainImage = r.Property.MainImage,
+            //    r.CreateAt,
+            //    r.RequirmentDocument
+            //}).ToList();
+
+
+
+            //var result = requestsInfo.Select(r => new RentPropertyRequestDto
+            //{
+            //    RentId = r.Id,
+            //    TenantName = r.TenantName,
+            //    TenantImage = r.TenantImage,
+            //    PropertyTitle = r.PropertyTitle,
+            //    PropertyMainImage = r.PropertyMainImage,
+            //    CreateAt = r.CreateAt,
+            //    RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
+            //}).ToList();
+
+            var result = requests.Select(r => new RentPropertyRequestDto
+            {
+                RentId = r.Id,
+                TenantName = r.Tenant.Name,
+                TenantImage = r.Tenant.Image,
+                PropertyTitle = r.Property.Title,
+                PropertyMainImage = r.Property.MainImage,
                 CreateAt = r.CreateAt,
                 RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
             }).ToList();
@@ -291,10 +357,10 @@ namespace RentMateAPI.Services.Implementations
             
             return request.Count() > 0;
         }
-        private async Task<bool> IsExistAsync(int tenantId, int propertyId)
+        private async Task<bool> IsExistAsync(int userId, int propertyId)
         {
             bool isUserExist = await _unitOfWork.Users
-                        .IsExistAsync(tenantId);
+                        .IsExistAsync(userId);
             bool isPropertyExist = await _unitOfWork.Properties
                         .IsExistAsync(propertyId);
 
