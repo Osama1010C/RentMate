@@ -2,6 +2,7 @@
 {
     public class GetNotificationsDto
     {
+        public int Id { get; set; }
         public string Description { get; set; } = null!;
 
         public string NotificationType { get; set; } = null!;

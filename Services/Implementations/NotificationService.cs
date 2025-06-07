@@ -26,7 +26,7 @@ namespace RentMateAPI.Services.Implementations
                 NotificationType = notificationDto.NotificationType,
                 NotificationTypeId = notificationDto.NotificationTypeId,
             });
-            await _unitOfWork.CompleteAsync();
+            //await _unitOfWork.CompleteAsync();
             if (NotificationHub.UserConnections.TryGetValue(userId, out string connectionId))
             {
                 await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", notificationDto);
@@ -58,6 +58,7 @@ namespace RentMateAPI.Services.Implementations
             var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
             return notifications.Select(n => new GetNotificationsDto
             {
+                Id = n.Id,
                 Description = n.Description,
                 NotificationType = n.NotificationType,
                 NotificationTypeId = n.NotificationTypeId,

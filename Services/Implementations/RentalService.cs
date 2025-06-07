@@ -36,7 +36,7 @@ namespace RentMateAPI.Services.Implementations
             var notificationDto = new AddNotificationDto
             {
                 Description = $"Your request for the property '{property.Title}' has been Accepted",
-                NotificationType = "rent request",
+                NotificationType = "Rent Request Action",
                 NotificationTypeId = property.Id
             };
             await _notificationService.AddNotificationAsync(request.TenantId, notificationDto);
@@ -59,7 +59,7 @@ namespace RentMateAPI.Services.Implementations
                 var notificationRejectDto = new AddNotificationDto
                 {
                     Description = $"Your request for the property '{property.Title}' has been Rejected",
-                    NotificationType = "rent request",
+                    NotificationType = "Rent Request Action",
                     NotificationTypeId = property.Id
                 };
                 await _notificationService.AddNotificationAsync(garbage.TenantId, notificationRejectDto);
@@ -88,7 +88,7 @@ namespace RentMateAPI.Services.Implementations
             var notificationRejectDto = new AddNotificationDto
             {
                 Description = $"Your request for the property '{property!.Title}' has been Rejected",
-                NotificationType = "rent request",
+                NotificationType = "Rent Request Action",
                 NotificationTypeId = property.Id
             };
             await _notificationService.AddNotificationAsync(request.TenantId, notificationRejectDto);
@@ -224,7 +224,7 @@ namespace RentMateAPI.Services.Implementations
             var notificationDto = new AddNotificationDto
             {
                 Description = $"A new rental request for your property '{property.Title}'",
-                NotificationType = "rent request",
+                NotificationType = "Rent Request",
                 NotificationTypeId = property.Id
             };
             await _notificationService.AddNotificationAsync((int)property.LandlordId!, notificationDto);
@@ -255,9 +255,14 @@ namespace RentMateAPI.Services.Implementations
 
             var property = await _unitOfWork.Properties
                                 .GetAsync(p => p.Id == propertyId);
+            if (property is null)
+                throw new Exception("this property is not found");
 
-            var notification = _unitOfWork.Notifications.GetAsync(n => n.UserId == tenantId &&
-                                n.Description == $"A new rental request for your property '{property.Title}'");
+            var notification = await _unitOfWork.Notifications.GetAsync(n => n.UserId == property.LandlordId &&
+                                n.Description.Equals($"A new rental request for your property '{property.Title}'"));
+            if (notification is null)
+                throw new Exception("this notification is not found");
+
             _unitOfWork.Notifications.Delete(notification.Id);
 
             await _unitOfWork.CompleteAsync();

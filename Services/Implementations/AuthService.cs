@@ -32,7 +32,7 @@ namespace RentMateAPI.Services.Implementations
             isAlreadyExist = users.Any(u => u.Name == tenant.Name || u.Email == tenant.Email || BC.EnhancedVerify(tenant.Password, u.Password));
             isAlreadyExistInPendings = pendings.Any(p => p.Name == tenant.Name || p.Email == tenant.Email || BC.EnhancedVerify(tenant.Password, p.Password));
 
-            if (isAlreadyExist || isAlreadyExistInPendings) throw new Exception("Nmae or Email or password already exists."); //Conflict("Nmae or Email or password already exists.");
+            if (isAlreadyExist || isAlreadyExistInPendings) throw new Exception("Name or Email or password already exists."); //Conflict("Nmae or Email or password already exists.");
 
 
             var newUser = new User

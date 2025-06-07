@@ -91,7 +91,7 @@ namespace RentMateAPI.Services.Implementations
                     NotificationTypeId = msg.SenderId
                 };
                 await _notificationService.AddNotificationAsync(recieverId, notificationDto);
-
+                await _unitOfWork.CompleteAsync();
             }
         }
 
