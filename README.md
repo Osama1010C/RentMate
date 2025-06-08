@@ -88,7 +88,7 @@ Experience the platform in action:
 
 Here is the database schema illustrating the relationships between the entities:
 
-<img src="Data/DB%20Schema.png" alt="Database Schema" width="1000"/>
+<img src="Data/DB%20ERD%20Schema.png" alt="Database Schema" width="1000"/>
 
 
 
