@@ -5,6 +5,7 @@ using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.DTOModels.DTORent;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RentMateAPI.Services.Implementations
 {
@@ -245,6 +246,22 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task RentPropertyAsync(RentPropertyDto rentDto)
         {
+            //new
+            var file = rentDto.RequirmentDocument;
+
+            
+
+            var extension = Path.GetExtension(file.FileName);
+            if (string.IsNullOrEmpty(extension) || extension.ToLower() != ".txt")
+                throw new InvalidDataException("Only .txt files are allowed.");
+
+            const long maxFileSize = 200; // 200 KB
+            if (file.Length > maxFileSize)
+                throw new InvalidDataException("File size cannot exceed 200 Byte.");
+
+
+            //
+
             if (!await IsExistAsync(rentDto.TenantId, rentDto.PropertyId))
                 throw new Exception("this tenant or property id not found");
             

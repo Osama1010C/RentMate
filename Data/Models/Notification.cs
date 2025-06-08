@@ -9,6 +9,8 @@ public partial class Notification
 
     public int UserId { get; set; }
 
+    public int Seen { get; set; }
+
     public string Description { get; set; } = null!;
 
     public string NotificationType { get; set; } = null!;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTONotification;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
@@ -26,7 +27,6 @@ namespace RentMateAPI.Services.Implementations
                 NotificationType = notificationDto.NotificationType,
                 NotificationTypeId = notificationDto.NotificationTypeId,
             });
-            //await _unitOfWork.CompleteAsync();
             if (NotificationHub.UserConnections.TryGetValue(userId, out string connectionId))
             {
                 await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveNotification", notificationDto);
@@ -56,20 +56,57 @@ namespace RentMateAPI.Services.Implementations
                 throw new Exception("User does not exist.");
 
             var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
+
             return notifications.Select(n => new GetNotificationsDto
             {
                 Id = n.Id,
                 Description = n.Description,
                 NotificationType = n.NotificationType,
                 NotificationTypeId = n.NotificationTypeId,
+                IsSeen = n.Seen == 1,
                 ActionDate = n.ActionDate
             })
                 .OrderByDescending(gn => gn.ActionDate)
                 .ToList();
         }
 
+        
+
+        public async Task<bool> IsAnyUnSeenNotification(int userId)
+        {
+            if (!await IsUserExistAsync(userId))
+                throw new Exception("User does not exist.");
+
+            var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
+            return notifications.Any(n => n.Seen == 0);
+        }
+
+        public async Task MarkAsSeen(int notificationId)
+        {
+            var notification = await _unitOfWork.Notifications.GetByIdAsync(notificationId);
+            if (notification == null)
+                throw new Exception("Notification does not exist.");
+
+            notification.Seen = 1;
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task<int> NumberOfUnSeenNotifications(int userId)
+        {
+            if (!await IsUserExistAsync(userId))
+                throw new Exception("User does not exist.");
+
+            var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
+            return notifications.Count(n => n.Seen == 0);
+        }
 
         private async Task<bool> IsUserExistAsync(int userId) => await _unitOfWork.Users.IsExistAsync(userId);
+
+        //private void MakeAsSeen(List<Notification> notifications)
+        //{
+        //    foreach (var notification in notifications)
+        //        notification.Seen = 1;
+        //}
 
     }
 }

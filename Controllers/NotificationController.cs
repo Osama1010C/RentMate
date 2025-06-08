@@ -29,6 +29,50 @@ namespace RentMateAPI.Controllers
             }
         }
 
+        [HttpGet("NumberOfUnSeen")]
+        public async Task<IActionResult> GetNumberOfUnSeenNotifications(int userId)
+        {
+            try
+            {
+                var unseenCount = await _notificationService.NumberOfUnSeenNotifications(userId);
+                return Ok(new { NumOfUnSeenNotififcations = unseenCount });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("CheckUnSeen")]
+        public async Task<IActionResult> CheckUnseenNotifications(int userId)
+        {
+            try
+            {
+                var unseenCount = await _notificationService.IsAnyUnSeenNotification(userId);
+                return Ok(new { IsAnyUnSeen = unseenCount });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
+        [HttpPost("MarkAsSeen")]
+        public async Task<IActionResult> MarkAsSeen(int notificationId)
+        {
+            try
+            {
+                await _notificationService.MarkAsSeen(notificationId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
         [HttpDelete]
         public async Task<IActionResult> DeleteNotifications(int userId)
         {

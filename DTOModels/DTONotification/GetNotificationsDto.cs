@@ -9,6 +9,8 @@
 
         public int NotificationTypeId { get; set; }
 
+        public bool IsSeen { get; set; }
+
         public DateTime? ActionDate { get; set; }
     }
 }

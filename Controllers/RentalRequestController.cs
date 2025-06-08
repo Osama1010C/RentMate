@@ -75,6 +75,10 @@ namespace RentMateAPI.Controllers
                 });
                 return Ok();
             }
+            catch (InvalidDataException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 return NotFound(ex.Message);
