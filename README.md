@@ -54,9 +54,12 @@ Experience the platform in action:
     ├── Models         --> Entity models
     └── DbContext      --> Database access (Scaffolded using Reverse Engineering)
 📁 Extensions          --> JWT + Service registration helpers
+📁 Exceptions          --> Exception Classes
 📁 Hub                 --> SignalR hub for real-time chat 💬
 📁 Repositories        --> Generic Repository pattern for data access
 📁 Services            --> Business logic layer
+📁 Helpers             --> Helper Methods to serve some services
+📁 Validation          --> check validations of models, images, and files
 📁 UOF (Unit of Work)  --> Transaction management layer
 ```
 
