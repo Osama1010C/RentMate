@@ -3,6 +3,8 @@ using RentMateAPI.DTOModels.DTOImage;
 using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using System.Security.Cryptography;
+using static System.Net.Mime.MediaTypeNames;
 using Property = RentMateAPI.Data.Models.Property;
 
 namespace RentMateAPI.Services.Implementations
@@ -127,7 +129,21 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<int> AddAsync(AddPropertyDto propertyDto, PropertyImagesDto imagesDto)
         {
-            
+            var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+            if (propertyDto.MainImage == null)
+                throw new Exception($"Property must have main image!");
+
+            if (!imagesDto.Images.Any())
+                throw new Exception($"Property must have at least one secondary image!");
+
+            if (!IsValidFileExtension(GetFileExtension(propertyDto.MainImage), GetFilesExtension(imagesDto.Images), allowedExtensions))
+                throw new Exception($"Invalid file extension! Allowed extensions are: {string.Join(", ", allowedExtensions)}");
+
+            if(!IsValidFileSize(GetFileSize(propertyDto.MainImage), GetFilesSize(imagesDto.Images), 1*1024*1024))
+                throw new Exception("File size exceeds the maximum limit of 1MB.");
+
+
+
             var landlord = await _unitOfWork.Users.GetByIdAsync(propertyDto.LandlordId);
             if (landlord is null)
                 throw new Exception($"Landlord with Id {propertyDto.LandlordId} not found!");
@@ -135,10 +151,7 @@ namespace RentMateAPI.Services.Implementations
             if (landlord.Role != "landlord")
                 throw new Exception($"This User Does Not allowed to Add Properties");
 
-            if(!imagesDto.Images.Any())
-                throw new Exception($"Property must have at least one secondary image!");
 
-            
             byte[]? mainImageBytes = null;
             using (var memoryStream = new MemoryStream())
             {
@@ -187,9 +200,61 @@ namespace RentMateAPI.Services.Implementations
             return property.Id;
         }
 
+        private bool IsValidFileExtension(string ImageExtension, List<string> allowedExtensions)
+        {
+            if (!allowedExtensions.Contains(ImageExtension.ToLower()))
+                return false;
+
+            return true;
+        }
+        private bool IsValidFileExtension(string mainImageExtension, List<string> secondaryImagesExtensions, List<string> allowedExtensions)
+        {
+            if(!allowedExtensions.Contains(mainImageExtension.ToLower()))
+                return false;
+
+            foreach(var image in secondaryImagesExtensions)
+                if(!allowedExtensions.Contains(image.ToLower()))
+                    return false;
+
+            return true;
+        }
+
+        private bool IsValidFileSize(long ImageSize, long allowedSize)
+        {
+            if (ImageSize > allowedSize) return false;
+            return true;
+        }
+        private bool IsValidFileSize(long mainImageSize, List<long> secondaryImagesSize, long allowedSize)
+        {
+            if (mainImageSize > allowedSize) return false;
+            foreach (var size in secondaryImagesSize)
+                if(size > allowedSize) return false;
+
+            return true;
+        }
+
+        private List<long> GetFilesSize(IEnumerable<IFormFile> files)
+        {
+            var sizes = new List<long>();
+            foreach (var file in files)
+                sizes.Add(file.Length);
+            return sizes;
+        }
+        private long GetFileSize(IFormFile file)
+            => file.Length;
+        private List<string> GetFilesExtension(IEnumerable<IFormFile> files)
+        {
+            var extensions = new List<string>();
+            foreach (var file in files)
+                extensions.Add(Path.GetExtension(file.FileName).ToLower());
+            return extensions;
+        }
+        private string GetFileExtension(IFormFile file)
+            => Path.GetExtension(file.FileName).ToLower();
 
 
-        
+
+
 
         public async Task UpdatePropertyAsync(int propertyId, UpdatedPropertDto propertyDto, ImageDto? image = null)
         {
@@ -213,6 +278,11 @@ namespace RentMateAPI.Services.Implementations
            
             if (image != null && image.Image != null)
             {
+                var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+                if (!IsValidFileExtension((GetFileExtension(image.Image)), allowedExtensions))
+                    throw new Exception($"Invalid file extension! Allowed extensions are: {string.Join(", ", allowedExtensions)}");
+                if (!IsValidFileSize(GetFileSize(image.Image), 1 * 1024 * 1024))
+                    throw new Exception("File size exceeds the maximum limit of 1MB.");
                 using var memoryStream = new MemoryStream();
                 image.Image.CopyTo(memoryStream);
                 property.MainImage = memoryStream.ToArray();
@@ -229,6 +299,12 @@ namespace RentMateAPI.Services.Implementations
 
             if(propertyImageDto.Image == null)
                 throw new Exception($"Please send image");
+
+            var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+            if (!IsValidFileExtension((GetFileExtension(propertyImageDto.Image)), allowedExtensions))
+                throw new Exception($"Invalid file extension! Allowed extensions are: {string.Join(", ", allowedExtensions)}");
+            if (!IsValidFileSize(GetFileSize(propertyImageDto.Image), 1 * 1024 * 1024))
+                throw new Exception("File size exceeds the maximum limit of 1MB.");
 
             // read image
             using var memoryStream = new MemoryStream();

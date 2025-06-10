@@ -97,7 +97,12 @@ namespace RentMateAPI.Services.Implementations
                 throw new Exception("User does not exist.");
 
             var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
-            return notifications.Count(n => n.Seen == 0);
+            int count = notifications.Count(n => n.Seen == 0);
+            if (NotificationHub.UserConnections.TryGetValue(userId, out string connectionId))
+            {
+                await _notificationHubContext.Clients.Client(connectionId).SendAsync("ReceiveUnseenCount", new {NumberOfUnSeenNotification = count });
+            }
+            return count;
         }
 
         private async Task<bool> IsUserExistAsync(int userId) => await _unitOfWork.Users.IsExistAsync(userId);

@@ -83,6 +83,17 @@ namespace RentMateAPI.Services.Implementations
         }
         public async Task AddImageAsync(UserImageDto userImage)
         {
+            var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+            var file = userImage.Image;
+            var extension = Path.GetExtension(file.FileName);
+
+            if(!IsValidFileExtension(extension, allowedExtensions))
+                throw new Exception($"Invalid file extension: {extension}. Allowed extensions are: {string.Join(", ", allowedExtensions)}");
+
+            if (!IsValidFileSize(file.Length, 1 * 1024 * 1024))
+                throw new Exception("File size exceeds the maximum limit of 1MB.");
+
+
             var user = await _unitOfWork.Users.GetByIdAsync(userImage.Id);
             if (user is null) throw new Exception($"user with {userImage.Id} not exist");
 
@@ -97,6 +108,11 @@ namespace RentMateAPI.Services.Implementations
             await _unitOfWork.CompleteAsync();
         }
 
-        
+        private bool IsValidFileExtension(string extension, List<string> allowedExtensions)
+            => allowedExtensions.Contains(extension.ToLower());
+        private bool IsValidFileSize(long fileSize, long allowedSize)
+            => fileSize <= allowedSize;
+
+
     }
 }

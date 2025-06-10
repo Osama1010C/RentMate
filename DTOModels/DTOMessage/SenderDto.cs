@@ -7,5 +7,9 @@
         public string SenderName { get; set; } = null!;
 
         public byte[]? SenderImage { get; set; }
+
+        public bool IsAnyUnseenMessages { get; set; }
+
+        public int NumberOfUnseenMessages { get; set; }
     }
 }

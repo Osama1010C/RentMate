@@ -75,15 +75,15 @@ namespace RentMateAPI.Controllers
             return Ok();
         }
 
-        
+
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(string name, string password)
+        public async Task<IActionResult> Login([FromBody]UserLoginDto userDto)
         {
             AuthModelDto? authModel = null;
             try
             {
-                authModel = await _authService.LoginAsync(name, password);
+                authModel = await _authService.LoginAsync(userDto.Name, userDto.Password);
 
                 HttpContext.Session.SetString("refreshToken:" + authModel.Id, authModel.RefreshToken);
                 return Ok(authModel);
@@ -95,9 +95,9 @@ namespace RentMateAPI.Controllers
 
         }
 
-    
 
-        
+
+
 
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto model)

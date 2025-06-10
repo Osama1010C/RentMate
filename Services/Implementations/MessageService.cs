@@ -106,6 +106,7 @@ namespace RentMateAPI.Services.Implementations
                               includeProperties: "Sender,Receiver",
                               orderBy: m => m.OrderBy(m => m.SentAt));
 
+            
 
             var messages = chat.Select(c => new MessageDto
             {
@@ -114,6 +115,12 @@ namespace RentMateAPI.Services.Implementations
                 Content = _dataProtector.Unprotect(c.Content),
             })
             .ToList();
+
+            foreach (var message in chat)
+                message.Seen = 1;
+
+            await _unitOfWork.CompleteAsync();
+
 
             return messages;
         }
@@ -156,7 +163,22 @@ namespace RentMateAPI.Services.Implementations
                 .DistinctBy(c => c.SenderId)
                 .ToList();
 
-            return senders;
+            var detailedSender = new List<SenderDto>();
+
+            foreach (var sender in senders)
+            {
+                var chat = await _unitOfWork.Messages
+                              .GetAllAsync(m => (m.SenderId == userId || m.ReceiverId == userId) 
+                              && (m.SenderId == sender.SenderId || m.ReceiverId == sender.SenderId));
+                if(chat.Any(c => c.Seen == 0))
+                {
+                    sender.IsAnyUnseenMessages = true;
+                    sender.NumberOfUnseenMessages = chat.Count(c => c.Seen == 0);
+                }
+                detailedSender.Add(sender);
+            }
+
+            return detailedSender;
         }
 
         private async Task<bool> IsExistAsync(int senderId, int receiverId)

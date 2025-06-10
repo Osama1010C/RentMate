@@ -15,6 +15,8 @@ public partial class Message
 
     public DateTime? SentAt { get; set; }
 
+    public int Seen { get; set; }
+
     public virtual User Receiver { get; set; } = null!;
 
     public virtual User Sender { get; set; } = null!;
