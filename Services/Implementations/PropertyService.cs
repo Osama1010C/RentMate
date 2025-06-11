@@ -10,6 +10,8 @@ namespace RentMateAPI.Services.Implementations
 {
     public class PropertyService : IPropertyService
     {
+        private static readonly int PropertiesPerPage = 4;
+
         private readonly IUnitOfWork _unitOfWork;
         private readonly IImageValidator _imageValidator;
         private readonly IModelValidator<User> _userValidator;
@@ -27,7 +29,13 @@ namespace RentMateAPI.Services.Implementations
             this._propertyImagesValidator = propertyImagesValidator;
         }
 
-        
+
+        public async Task<int> GetNumberOfPages()
+        {
+            var properties = await _unitOfWork.Properties.GetAllAsync();
+            var numberOfPages = (properties.Count(p => p.Status == "available" && p.PropertyApproval == "accepted")) / PropertiesPerPage;
+            return numberOfPages;
+        }
 
         public async Task<List<PropertyDto>> GetAllAsync()
         {
@@ -47,10 +55,34 @@ namespace RentMateAPI.Services.Implementations
                 Views = property.Views,
                 MainImage = property.MainImage,
                 CreateAt = property.CreateAt,
-                //PropertyImages = GetPropertyImagesAsync(property.Id).Result,
                 PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, property.Id).Result,
                 PropertyApproval = property.PropertyApproval
             }).OrderByDescending(p => p.Views).ToList();
+
+            return propertyDtos;
+        }
+
+        public async Task<List<PropertyDto>> GetAllAsync(int pageNumber)
+        {
+            var properties = await _unitOfWork.Properties.GetAllAsync(includeProperties: "Landlord");
+
+            var propertyDtos = properties.Select(property => new PropertyDto
+            {
+                Id = property.Id,
+                LandlordId = property.LandlordId,
+                LandlordName = property.Landlord!.Name,
+                LandlordImage = property.Landlord.Image,
+                Title = property.Title,
+                Description = property.Description,
+                Location = property.Location,
+                Price = property.Price,
+                Status = property.Status,
+                Views = property.Views,
+                MainImage = property.MainImage,
+                CreateAt = property.CreateAt,
+                PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, property.Id).Result,
+                PropertyApproval = property.PropertyApproval
+            }).OrderByDescending(p => p.Views).Skip(PropertiesPerPage * (pageNumber - 1)).Take(PropertiesPerPage).ToList();
 
             return propertyDtos;
         }
@@ -269,5 +301,7 @@ namespace RentMateAPI.Services.Implementations
             _unitOfWork.PropertyImages.Delete(propertyImageId);
             await _unitOfWork.CompleteAsync();
         }
+
+        
     }
 }

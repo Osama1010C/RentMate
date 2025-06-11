@@ -18,9 +18,16 @@ namespace RentMateAPI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProperties()
-            => Ok(await _propertyService.GetAllAsync());
-            
+        public async Task<IActionResult> GetAllProperties() => Ok(await _propertyService.GetAllAsync());
+
+
+        [HttpGet("pagination")]
+        public async Task<IActionResult> GetAllProperties(int pageNumber) => Ok(await _propertyService.GetAllAsync(pageNumber));
+
+
+        [HttpGet("NumberOfPages")]
+        public async Task<IActionResult> GetNumberOfPages() => Ok(await _propertyService.GetNumberOfPages());
+
 
 
         [HttpGet("{propertyId}")]
