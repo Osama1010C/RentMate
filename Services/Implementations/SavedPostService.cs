@@ -1,28 +1,29 @@
-﻿using RentMateAPI.DTOModels.DTOProperty;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using RentMateAPI.Data.Models;
+using RentMateAPI.DTOModels.DTOProperty;
+using RentMateAPI.Helpers;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using RentMateAPI.Validations.Interfaces;
 
 namespace RentMateAPI.Services.Implementations
 {
     public class SavedPostService : ISavedPostService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public SavedPostService(IUnitOfWork unitOfWork)
+        private readonly IModelValidator<User> _userValidator;
+        private readonly IModelValidator<Property> _propertyValidator;
+        public SavedPostService(IUnitOfWork unitOfWork, IModelValidator<User> userValidator, IModelValidator<Property> propertyValidator)
         {
             this._unitOfWork = unitOfWork;
+            this._userValidator = userValidator;
+            this._propertyValidator = propertyValidator;
         }
         public async Task<List<PropertyDto>> GetAllSavedAsync(int tenantId)
         {
-
-            var tenant = await _unitOfWork.Users.GetByIdAsync(tenantId);
-
-            if (tenant is null) throw new Exception("this tenant id not found");
-
-
+            var tenant = await _userValidator.IsModelExistReturn(tenantId);
 
             var savedPosts = await _unitOfWork.SavedPosts.GetAllAsync(sp => sp.TenantId == tenantId, includeProperties: "Property");
-
-
 
             var propertyDtos = savedPosts.Select(p =>
             {
@@ -42,22 +43,20 @@ namespace RentMateAPI.Services.Implementations
                     Views = p.Property.Views,
                     MainImage = p.Property.MainImage,
                     CreateAt = p.Property.CreateAt,
-                    PropertyImages = GetPropertyImagesAsync(p.Property.Id).Result,
+                    PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork,p.PropertyId).Result,
                     PropertyApproval = p.Property.PropertyApproval
                 };
             }).OrderByDescending(p => p.Views).ToList();
 
-
             return propertyDtos;
-
         }
 
         public async Task SavePostAsync(int tenantId, int propertyId)
         {
-            if (!await IsExistAsync(tenantId, propertyId))
-                throw new Exception("this user or property id not found");
+            await _userValidator.IsModelExist(tenantId);
+            await _propertyValidator.IsModelExist(propertyId);
 
-            if (await IsNewSavedPostAsync(tenantId, propertyId))
+            if (await SavePostHelper.IsNewSavedPostAsync(_unitOfWork, tenantId, propertyId))
             {
                 await _unitOfWork.SavedPosts.AddAsync(new()
                 {
@@ -73,35 +72,5 @@ namespace RentMateAPI.Services.Implementations
             }
             await _unitOfWork.CompleteAsync();
         }
-
-
-        private async Task<bool> IsNewSavedPostAsync(int tenantId, int propertyId)
-        {
-            var savedPost = await _unitOfWork.SavedPosts
-                        .GetAllAsync(p => (p.TenantId == tenantId) && (p.PropertyId == propertyId));
-
-            return savedPost.Count() == 0 ? true : false;
-        }
-
-        private async Task<bool> IsExistAsync(int tenantId, int propertyId)
-        {
-            bool isUserExist = await _unitOfWork.Users.IsExistAsync(tenantId);
-            bool isPropertyExist = await _unitOfWork.Properties.IsExistAsync(propertyId);
-
-            return isUserExist && isPropertyExist;
-
-        }
-
-        private async Task<List<PropertyImageDto>> GetPropertyImagesAsync(int propertyId)
-        {
-            var images = await _unitOfWork.PropertyImages.GetAllAsync(p => p.PropertyId == propertyId);
-            var result = images.Select(m => new PropertyImageDto
-            {
-                PropertyImageId = m.Id,
-                Image = m.Image
-            });
-            return result.ToList();
-        }
-
     }
 }

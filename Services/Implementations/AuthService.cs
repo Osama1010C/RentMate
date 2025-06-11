@@ -91,8 +91,5 @@ namespace RentMateAPI.Services.Implementations
                 IsAuthenticated = true
             };
         }
-
-        //public async Task<List<User>> GetAllAsync() => await _unitOfWork.Users.GetAllAsync();
-
     }
 }

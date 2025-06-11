@@ -1,11 +1,11 @@
 ﻿using RentMateAPI.Data.Models;
-using RentMateAPI.DTOModels.DTOMessage;
 using RentMateAPI.DTOModels.DTONotification;
 using RentMateAPI.DTOModels.DTOProperty;
 using RentMateAPI.DTOModels.DTORent;
+using RentMateAPI.Helpers;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
-using static System.Net.Mime.MediaTypeNames;
+using RentMateAPI.Validations.Interfaces;
 
 namespace RentMateAPI.Services.Implementations
 {
@@ -13,17 +13,24 @@ namespace RentMateAPI.Services.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly INotificationService _notificationService;
-        public RentalService(IUnitOfWork unitOfWork, INotificationService notificationService)
+        private readonly IFileValidator _fileValidator;
+        private readonly IModelValidator<User> _userValidator;
+        private readonly IModelValidator<Property> _propertyValidator;
+        private readonly IModelValidator<RentalRequest> _requestValidator;
+        public RentalService(IUnitOfWork unitOfWork, INotificationService notificationService, IFileValidator fileValidator,
+            IModelValidator<User> userValidator, IModelValidator<Property> propertyValidator, IModelValidator<RentalRequest> requestValidator)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
+            _fileValidator = fileValidator;
+            _userValidator = userValidator;
+            _propertyValidator = propertyValidator;
+            _requestValidator = requestValidator;
         }
         public async Task AcceptRequestAsync(int requestId)
         {
-            var request = await _unitOfWork.RentalRequests.GetByIdAsync(requestId);
+            var request = await _requestValidator.IsModelExistReturn(requestId);
 
-
-            if (request is null) throw new Exception("this rent request id not found");
 
             if (request.Status != "pending") throw new Exception("this request is already accepted or rejected");
             
@@ -73,10 +80,7 @@ namespace RentMateAPI.Services.Implementations
         
         public async Task RejectRequestAsync(int requestId)
         {
-            var request = await _unitOfWork.RentalRequests.GetByIdAsync(requestId);
-
-
-            if (request is null) throw new Exception("this rent request id not found");
+            var request = await _requestValidator.IsModelExistReturn(requestId);
 
             if (request.Status != "pending") throw new Exception("this request is already accepted or rejected");
 
@@ -100,39 +104,12 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<RentPropertyRequestDto>> GetAllRequestsAsync(int landlordId)
         {
-            var landlord = await _unitOfWork.Users.GetByIdAsync(landlordId);
-
-            if (landlord == null) throw new Exception("this landlord id not found");
-
+            var landlord = await _userValidator.IsModelExistReturn(landlordId);
 
             var requests = await _unitOfWork.RentalRequests
                 .GetAllAsync(r => (r.Property.LandlordId == landlordId) && (r.Status == "pending"), includeProperties: "Property,Tenant");
 
             if (requests == null) return new List<RentPropertyRequestDto>();
-
-            //var requestsInfo = requests.Select(r => new
-            //{
-            //    r.Id,
-            //    TenantName = r.Tenant.Name,
-            //    TenantImage = r.Tenant.Image,
-            //    PropertyTitle = r.Property.Title,
-            //    PropertyMainImage = r.Property.MainImage,
-            //    r.CreateAt,
-            //    r.RequirmentDocument
-            //}).ToList();
-
-
-
-            //var result = requestsInfo.Select(r => new RentPropertyRequestDto
-            //{
-            //    RentId = r.Id,
-            //    TenantName = r.TenantName,
-            //    TenantImage = r.TenantImage,
-            //    PropertyTitle = r.PropertyTitle,
-            //    PropertyMainImage = r.PropertyMainImage,
-            //    CreateAt = r.CreateAt,
-            //    RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
-            //}).ToList();
 
             var result = requests.Select(r => new RentPropertyRequestDto
             {
@@ -142,7 +119,7 @@ namespace RentMateAPI.Services.Implementations
                 PropertyTitle = r.Property.Title,
                 PropertyMainImage = r.Property.MainImage,
                 CreateAt = r.CreateAt,
-                RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
+                RequirmentDocument = DocumentHelper.ConvertDocumentToList(r.RequirmentDocument)
             }).ToList();
 
             return result;
@@ -150,42 +127,15 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<RentPropertyRequestDto>> GetAllRequestsAsync(int landlordId, int propertyId)
         {
-            if (!await IsExistAsync(landlordId, propertyId))
-                throw new Exception("this landlord id or property id not found");
+            await _propertyValidator.IsModelExist(propertyId);
 
-            var landlord = await _unitOfWork.Users.GetByIdAsync(landlordId);
-
-            //if (landlord == null) throw new Exception("this landlord id not found");
-
+            var landlord = await _userValidator.IsModelExistReturn(landlordId);
 
             var requests = await _unitOfWork.RentalRequests
                 .GetAllAsync(r => r.PropertyId == propertyId && (r.Property.LandlordId == landlordId) && (r.Status == "pending"), includeProperties: "Property,Tenant");
 
             if (requests == null) return new List<RentPropertyRequestDto>();
 
-            //var requestsInfo = requests.Select(r => new
-            //{
-            //    r.Id,
-            //    TenantName = r.Tenant.Name,
-            //    TenantImage = r.Tenant.Image,
-            //    PropertyTitle = r.Property.Title,
-            //    PropertyMainImage = r.Property.MainImage,
-            //    r.CreateAt,
-            //    r.RequirmentDocument
-            //}).ToList();
-
-
-
-            //var result = requestsInfo.Select(r => new RentPropertyRequestDto
-            //{
-            //    RentId = r.Id,
-            //    TenantName = r.TenantName,
-            //    TenantImage = r.TenantImage,
-            //    PropertyTitle = r.PropertyTitle,
-            //    PropertyMainImage = r.PropertyMainImage,
-            //    CreateAt = r.CreateAt,
-            //    RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
-            //}).ToList();
 
             var result = requests.Select(r => new RentPropertyRequestDto
             {
@@ -195,7 +145,7 @@ namespace RentMateAPI.Services.Implementations
                 PropertyTitle = r.Property.Title,
                 PropertyMainImage = r.Property.MainImage,
                 CreateAt = r.CreateAt,
-                RequirmentDocument = ConvertDocumentToList(r.RequirmentDocument)
+                RequirmentDocument = DocumentHelper.ConvertDocumentToList(r.RequirmentDocument)
             }).ToList();
 
             return result;
@@ -203,10 +153,7 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<PropertyRequestDto>> GetTenantRequestsAsync(int tenantId)
         {
-            var tenant = await _unitOfWork.Users.GetByIdAsync(tenantId);
-            if (tenant is null) throw new Exception("this tenant id not found");
-
-
+            var tenant = await _userValidator.IsModelExistReturn(tenantId);
             
             var requests = await _unitOfWork.RentalRequests
                             .GetAllAsync(r => (r.TenantId == tenantId) , includeProperties: "Property");
@@ -236,7 +183,7 @@ namespace RentMateAPI.Services.Implementations
                     Price = r.Property.Price,
                     Status = r.Property.Status,
                     Views = r.Property.Views,
-                    PropertyImages = GetPropertyImagesAsync(r.Property.Id).Result,
+                    PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, r.Property.Id).Result,
                     PropertyCreateAt = r.Property.CreateAt
                 };
             });
@@ -246,26 +193,14 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task RentPropertyAsync(RentPropertyDto rentDto)
         {
-            //new
-            var file = rentDto.RequirmentDocument;
+            _fileValidator.IsNullFile(rentDto.RequirmentDocument!);
+            _fileValidator.IsValidFileExtension(rentDto.RequirmentDocument!, ".txt");
+            _fileValidator.IsValidFileSize(rentDto.RequirmentDocument!, 200); // 200 B
 
-            
+            await _userValidator.IsModelExist(rentDto.TenantId);
+            await _propertyValidator.IsModelExist(rentDto.PropertyId);
 
-            var extension = Path.GetExtension(file.FileName);
-            if (string.IsNullOrEmpty(extension) || extension.ToLower() != ".txt")
-                throw new InvalidDataException("Only .txt files are allowed.");
-
-            const long maxFileSize = 200; // 200 KB
-            if (file.Length > maxFileSize)
-                throw new InvalidDataException("File size cannot exceed 200 Byte.");
-
-
-            //
-
-            if (!await IsExistAsync(rentDto.TenantId, rentDto.PropertyId))
-                throw new Exception("this tenant or property id not found");
-            
-            if (await IsRequestedBeforeAsync(rentDto.TenantId, rentDto.PropertyId))
+            if (await RentalHelper.IsRequestedBeforeAsync(_unitOfWork, rentDto.TenantId, rentDto.PropertyId))
             {
                 var request = await _unitOfWork.RentalRequests
                                     .GetAsync(r => r.TenantId == rentDto.TenantId && r.PropertyId == rentDto.PropertyId);
@@ -278,21 +213,18 @@ namespace RentMateAPI.Services.Implementations
                 
             }
 
-            var property = await _unitOfWork.Properties
-                            .GetAsync(p => p.Id == rentDto.PropertyId);
+            
+            var property = await _propertyValidator.IsModelExistReturn(rentDto.PropertyId);
 
-            if (property is null) throw new Exception("this property id not found");
 
             if (property.Status == "rented" || property.PropertyApproval == "pending" || property.PropertyApproval == "rejected")
                 throw new Exception("this property id is rented or not availble");
 
-            if (rentDto.RequirmentDocument == null)
-                throw new Exception("Please send the document!");
 
             byte[]? proposalDoc = null;
             using (var memoryStream = new MemoryStream())
             {
-                rentDto.RequirmentDocument.CopyTo(memoryStream);
+                rentDto.RequirmentDocument!.CopyTo(memoryStream);
                 proposalDoc = memoryStream.ToArray();
             }
            
@@ -318,10 +250,10 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task CancelRentPropertyAsync(int tenantId, int propertyId)
         {
-            if (!await IsExistAsync(tenantId, propertyId))
-                throw new Exception("this tenant or property id not found");
+            await _userValidator.IsModelExist(tenantId);
+            await _propertyValidator.IsModelExist(propertyId);
 
-            if (!await IsRequestedBeforeAsync(tenantId, propertyId))
+            if (!await RentalHelper.IsRequestedBeforeAsync(_unitOfWork, tenantId, propertyId))
                 throw new Exception("this request is not found");
 
             var request = await _unitOfWork.RentalRequests
@@ -331,15 +263,10 @@ namespace RentMateAPI.Services.Implementations
                 throw new Exception("this request is not found");
 
 
-
-            
-            
             _unitOfWork.RentalRequests.Delete(request.Id);
 
-            var property = await _unitOfWork.Properties
-                                .GetAsync(p => p.Id == propertyId);
-            if (property is null)
-                throw new Exception("this property is not found");
+            
+            var property = await _propertyValidator.IsModelExistReturn(propertyId);
 
             var notification = await _unitOfWork.Notifications.GetAsync(n => n.UserId == property.LandlordId &&
                                 n.Description.Equals($"A new rental request for your property '{property.Title}'"));
@@ -350,51 +277,5 @@ namespace RentMateAPI.Services.Implementations
 
             await _unitOfWork.CompleteAsync();
         }
-
-
-
-        private List<string> ConvertDocumentToList(byte[] file)
-        {
-            var data = new List<string>();
-            if (file == null) return data;
-
-            using var memoryStream = new MemoryStream(file);
-            using var reader = new StreamReader(memoryStream);
-            string? line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                data.Add(line);
-            }
-            return data;
-        }
-        private async Task<bool> IsRequestedBeforeAsync(int tenantId, int propertyId)
-        {
-            var request =  await _unitOfWork.RentalRequests
-                        .GetAllAsync(r => (r.TenantId == tenantId) && (r.PropertyId == propertyId) && ((r.Status == "rejected") || (r.Status == "pending")));
-            
-            return request.Count() > 0;
-        }
-        private async Task<bool> IsExistAsync(int userId, int propertyId)
-        {
-            bool isUserExist = await _unitOfWork.Users
-                        .IsExistAsync(userId);
-            bool isPropertyExist = await _unitOfWork.Properties
-                        .IsExistAsync(propertyId);
-
-            return isUserExist && isPropertyExist;
-
-        }
-        private async Task<List<PropertyImageDto>> GetPropertyImagesAsync(int propertyId)
-        {
-            var images = await _unitOfWork.PropertyImages.GetAllAsync(p => p.PropertyId == propertyId);
-            var result = images.Select(m => new PropertyImageDto
-            {
-                PropertyImageId = m.Id,
-                Image = m.Image
-            });
-            return result.ToList();
-        }
     }
-
-    
 }

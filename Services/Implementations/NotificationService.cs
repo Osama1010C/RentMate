@@ -3,6 +3,7 @@ using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTONotification;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using RentMateAPI.Validations.Interfaces;
 
 namespace RentMateAPI.Services.Implementations
 {
@@ -10,11 +11,16 @@ namespace RentMateAPI.Services.Implementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHubContext<NotificationHub> _notificationHubContext;
+        private readonly IModelValidator<Notification> _notificationValidator;
+        private readonly IModelValidator<User> _userValidator;
 
-        public NotificationService(IUnitOfWork unitOfWork, IHubContext<NotificationHub> notificationHubContext)
+        public NotificationService(IUnitOfWork unitOfWork, IHubContext<NotificationHub> notificationHubContext, 
+            IModelValidator<User> userValidator, IModelValidator<Notification> notificationValidator)
         {
             _unitOfWork = unitOfWork;
             _notificationHubContext = notificationHubContext;
+            _userValidator = userValidator;
+            _notificationValidator = notificationValidator;
         }
 
 
@@ -35,8 +41,7 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task DeleteNotificationAsync(int userId)
         {
-            if (!await IsUserExistAsync(userId))
-                throw new Exception("User does not exist.");
+            await _userValidator.IsModelExist(userId);
 
             var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
             
@@ -52,8 +57,8 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<GetNotificationsDto>> GetNotificationsAsync(int userId)
         {
-            if (!await IsUserExistAsync(userId))
-                throw new Exception("User does not exist.");
+            await _userValidator.IsModelExist(userId);
+
 
             var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
 
@@ -74,8 +79,8 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<bool> IsAnyUnSeenNotification(int userId)
         {
-            if (!await IsUserExistAsync(userId))
-                throw new Exception("User does not exist.");
+            await _userValidator.IsModelExist(userId);
+
 
             var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
             return notifications.Any(n => n.Seen == 0);
@@ -83,9 +88,7 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task MarkAsSeen(int notificationId)
         {
-            var notification = await _unitOfWork.Notifications.GetByIdAsync(notificationId);
-            if (notification == null)
-                throw new Exception("Notification does not exist.");
+            var notification = await _notificationValidator.IsModelExistReturn(notificationId);
 
             notification.Seen = 1;
             await _unitOfWork.CompleteAsync();
@@ -93,8 +96,8 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<int> NumberOfUnSeenNotifications(int userId)
         {
-            if (!await IsUserExistAsync(userId))
-                throw new Exception("User does not exist.");
+            await _userValidator.IsModelExist(userId);
+
 
             var notifications = await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == userId);
             int count = notifications.Count(n => n.Seen == 0);
@@ -104,14 +107,5 @@ namespace RentMateAPI.Services.Implementations
             }
             return count;
         }
-
-        private async Task<bool> IsUserExistAsync(int userId) => await _unitOfWork.Users.IsExistAsync(userId);
-
-        //private void MakeAsSeen(List<Notification> notifications)
-        //{
-        //    foreach (var notification in notifications)
-        //        notification.Seen = 1;
-        //}
-
     }
 }

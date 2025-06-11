@@ -1,7 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOToken;
-using RentMateAPI.Repositories.Interfaces;
 using RentMateAPI.UOF.Interface;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,14 +11,12 @@ namespace RentMateAPI.Services.Implementations
     public class JwtService
     {
         private readonly IConfiguration _configuration;
-        //private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
 
         public JwtService(IConfiguration configuration, IUnitOfWork unitOfWork)
         {
             _configuration = configuration;
-            //_userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -53,7 +50,6 @@ namespace RentMateAPI.Services.Implementations
             if (storedToken == null || storedToken != refreshToken)
                 throw new Exception("Session expired or refresh token invalid");
 
-            //var user = await _userRepository.GetByIdAsync(userId);
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
             if (user == null)
                 throw new Exception("User not found");
@@ -73,8 +69,5 @@ namespace RentMateAPI.Services.Implementations
 
             return authModel;
         }
-
-
-        
     }
 }

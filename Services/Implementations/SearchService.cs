@@ -1,4 +1,5 @@
 ﻿using RentMateAPI.DTOModels.DTOProperty;
+using RentMateAPI.Helpers;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
 
@@ -50,7 +51,7 @@ namespace RentMateAPI.Services.Implementations
                     Views = p.Views,
                     MainImage = p.MainImage,
                     CreateAt = p.CreateAt,
-                    PropertyImages = GetPropertyImagesAsync(p.Id).Result,
+                    PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, p.Id).Result,
                     PropertyApproval = p.PropertyApproval
                 };
             }).OrderByDescending(p => p.Views).ToList();
@@ -58,18 +59,5 @@ namespace RentMateAPI.Services.Implementations
 
             return propertyDtos;
         }
-
-
-        private async Task<List<PropertyImageDto>> GetPropertyImagesAsync(int propertyId)
-        {
-            var images = await _unitOfWork.PropertyImages.GetAllAsync(p => p.PropertyId == propertyId);
-            var result = images.Select(m => new PropertyImageDto
-            {
-                PropertyImageId = m.Id,
-                Image = m.Image
-            });
-            return result.ToList();
-        }
-
     }
 }

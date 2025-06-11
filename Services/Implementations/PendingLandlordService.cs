@@ -1,5 +1,4 @@
 ﻿using RentMateAPI.Data.Models;
-using RentMateAPI.Repositories.Interfaces;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
 
@@ -7,13 +6,9 @@ namespace RentMateAPI.Services.Implementations
 {
     public class PendingLandlordService : IPendingLandlordService
     {
-        //private readonly IPendingLandlordRepository _pendingLandlordRepository;
-        //private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
         public PendingLandlordService(IUnitOfWork unitOfWork)
         {
-            //_pendingLandlordRepository = pendingLandlordRepository;
-            //_userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -24,8 +19,6 @@ namespace RentMateAPI.Services.Implementations
             var hashedPassword = BC.EnhancedHashPassword(landlord.Password);
 
 
-            //var users = await _userRepository.GetAllAsync();
-            //var pendings = await _pendingLandlordRepository.GetAllAsync();
             var users = await _unitOfWork.Users.GetAllAsync();
             var pendings = await _unitOfWork.PendingLandlord.GetAllAsync();
 
@@ -36,8 +29,6 @@ namespace RentMateAPI.Services.Implementations
             if (isAlreadyExist || isAlreadyExistInPendings) return false;
 
             landlord.Password = hashedPassword;
-            //await _pendingLandlordRepository.AddAsync(landlord);
-            //return await _pendingLandlordRepository.SaveChangesAsync();
             await _unitOfWork.PendingLandlord.AddAsync(landlord);
             return await _unitOfWork.CompleteAsync() > 0;
         }

@@ -1,21 +1,27 @@
-﻿using RentMateAPI.DTOModels.DTOComment;
+﻿using RentMateAPI.Data.Models;
+using RentMateAPI.DTOModels.DTOComment;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using RentMateAPI.Validations.Interfaces;
 
 namespace RentMateAPI.Services.Implementations
 {
     public class CommentService : ICommentService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CommentService(IUnitOfWork unitOfWork)
+        private readonly IModelValidator<User> _userValidator;
+        private readonly IModelValidator<Property> _propertyValidator;
+        public CommentService(IUnitOfWork unitOfWork, IModelValidator<User> userValidator, IModelValidator<Property> propertyValidator)
         {
             this._unitOfWork = unitOfWork;
+            this._userValidator = userValidator;
+            this._propertyValidator = propertyValidator;
         }
 
         public async Task AddCommentAsync(int userId, int propertyId, string comment)
         {
-            if (!await IsExistAsync(userId, propertyId))
-                throw new Exception("this user or property id not found");
+            await _userValidator.IsModelExist(userId);
+            await _propertyValidator.IsModelExist(propertyId);
 
             await _unitOfWork.Comments.AddAsync(new()
             {
@@ -29,10 +35,7 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<UserCommentDto>> GetAllPropertyCommentsAsync(int propertyId)
         {
-            var property = await _unitOfWork.Properties
-                            .GetByIdAsync(propertyId);
-
-            if (property is null) throw new Exception("this property id not found");
+            var property = await _propertyValidator.IsModelExistReturn(propertyId);
 
             var comments = await _unitOfWork.Comments
                            .GetAllAsync(c => c.PropertyId == propertyId, includeProperties: "User");
@@ -48,17 +51,6 @@ namespace RentMateAPI.Services.Implementations
             }).ToList();
 
             return commentDtos;
-        }
-
-
-        private async Task<bool> IsExistAsync(int userId, int propertyId)
-        {
-            var isUserExist = await _unitOfWork.Users.IsExistAsync(userId);
-
-            var isPropertyExist = await _unitOfWork.Properties.IsExistAsync(propertyId);
-
-            return isUserExist && isPropertyExist;
-
         }
     }
 }

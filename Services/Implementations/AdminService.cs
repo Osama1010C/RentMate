@@ -1,9 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTODashboard;
 using RentMateAPI.DTOModels.DTOHistory;
 using RentMateAPI.DTOModels.DTONotification;
+using RentMateAPI.Helpers;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using RentMateAPI.Validations.Interfaces;
 
 namespace RentMateAPI.Services.Implementations
 {
@@ -12,17 +14,18 @@ namespace RentMateAPI.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHistoryService _historyService;
         private readonly INotificationService _notificationService;
-        public AdminService(IUnitOfWork unitOfWork, IHistoryService historyService, INotificationService notificationService)
+        private readonly IModelValidator<PendingLandlord> _pendingLandlordValidator;
+        public AdminService(IUnitOfWork unitOfWork, IHistoryService historyService, INotificationService notificationService,
+            IModelValidator<PendingLandlord> pendingLandlordValidator)
         {
             this._unitOfWork = unitOfWork;
             _historyService = historyService;
             _notificationService = notificationService;
+            _pendingLandlordValidator = pendingLandlordValidator;
         }
         public async Task AcceptLandlordRegistrationAsync(int requestId)
         {
-            var request = await _unitOfWork.PendingLandlord.GetByIdAsync(requestId);
-
-            if (request is null) throw new Exception($"Request id : {requestId} not found");
+            var request = await _pendingLandlordValidator.IsModelExistReturn(requestId);
 
             _unitOfWork.PendingLandlord.Delete(request.Id);
 
@@ -36,7 +39,7 @@ namespace RentMateAPI.Services.Implementations
             });
             await _historyService.AddLandlordsRegistrationHistoryAsync(new AddHistoryDto
             {
-                UserId = GetAdminId().Result,
+                UserId = AdminHelper.GetAdminId(_unitOfWork).Result,
                 Description = $"{request.Name}'s registration Landlord request has been Accepted",
                 HistoryType = "Registration Action"
             });
@@ -46,13 +49,12 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task RejectLandlordRegistrationAsync(int requestId)
         {
-            var request = await _unitOfWork.PendingLandlord.GetByIdAsync(requestId);
+            var request = await _pendingLandlordValidator.IsModelExistReturn(requestId);
 
-            if (request is null) throw new Exception($"Request id : {requestId} not found");
 
             await _historyService.AddLandlordsRegistrationHistoryAsync(new AddHistoryDto
             {
-                UserId = GetAdminId().Result,
+                UserId = AdminHelper.GetAdminId(_unitOfWork).Result,
                 Description = $"{request.Name}'s registration Landlord request has been Rejected",
                 HistoryType = "Registration Action"
             });
@@ -71,7 +73,7 @@ namespace RentMateAPI.Services.Implementations
             post.PropertyApproval = "accepted";
             await _historyService.AddPropertyHistoryAsync(new AddHistoryDto
             {
-                UserId = GetAdminId().Result,
+                UserId = AdminHelper.GetAdminId(_unitOfWork).Result,
                 Description = $"Property post {post.Title} has been Accepted",
                 HistoryType = "Property Action",
             });
@@ -96,7 +98,7 @@ namespace RentMateAPI.Services.Implementations
 
             await _historyService.AddPropertyHistoryAsync(new AddHistoryDto
             {
-                UserId = GetAdminId().Result,
+                UserId = AdminHelper.GetAdminId(_unitOfWork).Result,
                 Description = $"Property post {post.Title} has been Rejected",
                 HistoryType = "Property Action"
             });
@@ -142,11 +144,5 @@ namespace RentMateAPI.Services.Implementations
 
             return dashBoard;
         }
-        private async Task<int> GetAdminId()
-        {
-            var admin = await _unitOfWork.Users.GetAllAsync(u => u.Role == "admin");
-            return admin[0].Id;
-        }
-        
     }
 }

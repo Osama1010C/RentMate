@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.SignalR;
 using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOMessage;
 using RentMateAPI.DTOModels.DTONotification;
+using RentMateAPI.Helpers;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using RentMateAPI.Validations.Interfaces;
 
 // data protection is used to encrypt and decrypt the message content.
 
@@ -37,20 +39,23 @@ namespace RentMateAPI.Services.Implementations
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly IDataProtector _dataProtector;
         private readonly INotificationService _notificationService;
+        private readonly IModelValidator<User> _userValidator;
+
         public MessageService(IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext,
             IDataProtectionProvider dataProtectionProvider, IConfiguration configuration,
-            INotificationService notificationService)
+            INotificationService notificationService, IModelValidator<User> userValidator)
         {
             _unitOfWork = unitOfWork;
             _hubContext = hubContext;
             _dataProtector = dataProtectionProvider.CreateProtector(configuration["SecretKey"]!);
             _notificationService = notificationService;
+            _userValidator = userValidator;
         }
 
         public async Task AddMessageAsync(int senderId, int recieverId, string message)
         {
-            if (!await IsExistAsync(senderId, recieverId))
-                throw new Exception("this user id not found");
+            await _userValidator.IsModelExist(senderId);
+            await _userValidator.IsModelExist(recieverId);
 
             var encryptedMessage = _dataProtector.Protect(message);
 
@@ -81,7 +86,7 @@ namespace RentMateAPI.Services.Implementations
                 await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveMessage", messageDto);
             }
 
-            var IsMessagedBefore = await IsMessagedBeforeInNotification(messageDto.SenderName, recieverId);
+            var IsMessagedBefore = await NotificationHelper.IsMessagedBeforeInNotification(_unitOfWork, messageDto.SenderName, recieverId);
             if (!IsMessagedBefore)
             {
                 var notificationDto = new AddNotificationDto
@@ -97,8 +102,8 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<MessageDto>> GetChatContentAsync(int userId, int recieverId)
         {
-            if (!await IsExistAsync(userId, recieverId))
-                throw new Exception("this user id not found");
+            await _userValidator.IsModelExist(userId);
+            await _userValidator.IsModelExist(recieverId);
 
 
             var chat = await _unitOfWork.Messages
@@ -127,9 +132,7 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<SenderDto>> GetMyChatsAsync(int userId)
         {
-
-            if (!await _unitOfWork.Users.IsExistAsync(userId))
-                throw new Exception("this user id not found");
+            await _userValidator.IsModelExist(userId);
 
 
             var chats = await _unitOfWork.Messages
@@ -179,22 +182,6 @@ namespace RentMateAPI.Services.Implementations
             }
 
             return detailedSender;
-        }
-
-        private async Task<bool> IsExistAsync(int senderId, int receiverId)
-        {
-            var users = await _unitOfWork.Users.GetAllAsync();
-
-            bool isSenderExist = users.Any(u => u.Id == senderId);
-            bool isReceiverExist = users.Any(u => u.Id == receiverId);
-
-            return isSenderExist && isReceiverExist;
-        }
-
-        private async Task<bool> IsMessagedBeforeInNotification(string SenderName,int recieverId)
-        {
-            var notifications =  await _unitOfWork.Notifications.GetAllAsync(n => n.UserId == recieverId && n.NotificationType == "Message");
-            return notifications.Any(n => n.Description.Contains(SenderName));
         }
     }
 }

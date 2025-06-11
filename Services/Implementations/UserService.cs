@@ -1,7 +1,8 @@
-﻿using RentMateAPI.DTOModels.DTODashboard;
+﻿using RentMateAPI.Data.Models;
 using RentMateAPI.DTOModels.DTOUser;
 using RentMateAPI.Services.Interfaces;
 using RentMateAPI.UOF.Interface;
+using RentMateAPI.Validations.Interfaces;
 using System.Data;
 
 namespace RentMateAPI.Services.Implementations
@@ -9,14 +10,15 @@ namespace RentMateAPI.Services.Implementations
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UserService(IUnitOfWork unitOfWork)
+        private readonly IImageValidator _imageValidator;
+        private readonly IModelValidator<User> _userValidator;
+        public UserService(IUnitOfWork unitOfWork, IImageValidator imageValidator, IModelValidator<User> userValidator)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
+            _imageValidator = imageValidator;
+            _userValidator = userValidator;
         }
 
-        
-
-        
 
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
@@ -36,9 +38,7 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<UserDto> GetUserAsync(int id)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(id);
-
-            if (user is null) throw new Exception($"user with {id} not exist");
+            var user = await _userValidator.IsModelExistReturn(id);
 
             var dtoUser = new UserDto
             {
@@ -76,26 +76,15 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<byte[]> GetUserImageAsync(int userId)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(userId);
-            if (user is null) throw new Exception($"user with {userId} not exist");
+            var user = await _userValidator.IsModelExistReturn(userId);
             return user.Image!;
-                
         }
         public async Task AddImageAsync(UserImageDto userImage)
         {
-            var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
-            var file = userImage.Image;
-            var extension = Path.GetExtension(file.FileName);
+            _imageValidator.IsValidImageExtension(userImage.Image);
+            _imageValidator.IsValidImageSize(userImage.Image);
 
-            if(!IsValidFileExtension(extension, allowedExtensions))
-                throw new Exception($"Invalid file extension: {extension}. Allowed extensions are: {string.Join(", ", allowedExtensions)}");
-
-            if (!IsValidFileSize(file.Length, 1 * 1024 * 1024))
-                throw new Exception("File size exceeds the maximum limit of 1MB.");
-
-
-            var user = await _unitOfWork.Users.GetByIdAsync(userImage.Id);
-            if (user is null) throw new Exception($"user with {userImage.Id} not exist");
+            var user = await _userValidator.IsModelExistReturn(userImage.Id);
 
             byte[]? mainImageBytes = null;
             using (var memoryStream = new MemoryStream())
@@ -107,12 +96,5 @@ namespace RentMateAPI.Services.Implementations
             user!.Image = mainImageBytes;
             await _unitOfWork.CompleteAsync();
         }
-
-        private bool IsValidFileExtension(string extension, List<string> allowedExtensions)
-            => allowedExtensions.Contains(extension.ToLower());
-        private bool IsValidFileSize(long fileSize, long allowedSize)
-            => fileSize <= allowedSize;
-
-
     }
 }
