@@ -33,7 +33,7 @@ namespace RentMateAPI.Services.Implementations
         public async Task<int> GetNumberOfPages()
         {
             var properties = await _unitOfWork.Properties.GetAllAsync();
-            var numberOfPages = (properties.Count(p => p.Status == "available" && p.PropertyApproval == "accepted")) / PropertiesPerPage;
+            var numberOfPages = (int)Math.Ceiling((decimal)(properties.Count(p => p.Status == "available" && p.PropertyApproval == "accepted")) / PropertiesPerPage);
             return numberOfPages;
         }
 
@@ -64,7 +64,10 @@ namespace RentMateAPI.Services.Implementations
 
         public async Task<List<PropertyDto>> GetAllAsync(int pageNumber)
         {
-            var properties = await _unitOfWork.Properties.GetAllAsync(includeProperties: "Landlord");
+            var properties = await _unitOfWork.Properties.GetAllAsync(
+                skip: pageNumber < 1 ? 0 : PropertiesPerPage * (pageNumber - 1),
+                take: PropertiesPerPage,
+                includeProperties: "Landlord");
 
             var propertyDtos = properties.Select(property => new PropertyDto
             {
@@ -82,7 +85,7 @@ namespace RentMateAPI.Services.Implementations
                 CreateAt = property.CreateAt,
                 PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, property.Id).Result,
                 PropertyApproval = property.PropertyApproval
-            }).OrderByDescending(p => p.Views).Skip(PropertiesPerPage * (pageNumber - 1)).Take(PropertiesPerPage).ToList();
+            }).OrderByDescending(p => p.Views).ToList();
 
             return propertyDtos;
         }
