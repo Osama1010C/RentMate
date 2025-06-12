@@ -60,6 +60,8 @@ Experience the platform in action:
 📁 Services            --> Business logic layer
 📁 Helpers             --> Helper Methods to serve some services
 📁 Validation          --> check validations of models, images, and files
+📁 Middleware
+📁 Logs                --> trace execute time for each endpoint
 📁 UOF (Unit of Work)  --> Transaction management layer
 ```
 
