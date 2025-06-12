@@ -19,7 +19,7 @@ namespace RentMateAPI.Repositories.Implementations
         public async Task<T?> GetByIdAsync(int? id) => await _dbSet.FindAsync(id);
         
 
-        public async Task<List<T>> GetAllAsync() => await _dbSet.ToListAsync();
+        public async Task<List<T>> GetAllAsync() => await _dbSet.AsNoTracking().ToListAsync();
         
         public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
 
@@ -36,7 +36,7 @@ namespace RentMateAPI.Repositories.Implementations
                                                   Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
                                                   string includeProperties = "")
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<T> query = _dbSet.AsNoTracking();
 
             if (filter != null)
                 query = query.Where(filter);
@@ -52,7 +52,7 @@ namespace RentMateAPI.Repositories.Implementations
 
         public async Task<List<T>> GetAllAsync(int skip, int take, string includeProperties = "")
         {
-            IQueryable<T> query = _dbSet.Skip(skip).Take(take);
+            IQueryable<T> query = _dbSet.AsNoTracking().Skip(skip).Take(take);
 
             foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 query = query.Include(includeProperty);

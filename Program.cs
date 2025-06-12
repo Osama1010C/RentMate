@@ -5,6 +5,7 @@ using RentMateAPI.Services.Implementations;
 using RentMateAPI.Data;
 using RentMateAPI.Extensions;
 using System.Text;
+using RentMateAPI.Middleware;
 
 namespace RentMateAPI
 {
@@ -109,6 +110,8 @@ namespace RentMateAPI
 
             app.MapHub<ChatHub>("/chathub");
             app.MapHub<NotificationHub>("/notificationhub");
+
+            app.UseMiddleware<ExecutionTimeLogging>();
 
             app.MapControllers();
 

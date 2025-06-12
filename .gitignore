@@ -3,6 +3,7 @@
 Properties/
 bin/
 obj/
+Logs/
 
 # Ignore these files
 RentMateAPI.csproj
