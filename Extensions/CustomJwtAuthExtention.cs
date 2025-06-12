@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 
 namespace RentMateAPI.Extensions
@@ -29,10 +31,14 @@ namespace RentMateAPI.Extensions
             });
         }
 
-        public static void AddSwaggerGenJwtAuth(this IServiceCollection services)
+        public static void AddSwaggerGenJwtAuthAndXmlDoc(this IServiceCollection services)
         {
             services.AddSwaggerGen(o =>
             {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                o.IncludeXmlComments(xmlPath);
+
                 o.SwaggerDoc("v1", new OpenApiInfo()
                 {
                     Version = "v1",

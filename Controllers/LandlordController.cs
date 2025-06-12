@@ -16,8 +16,9 @@ namespace RentMateAPI.Controllers
             this._rentalService = rentalService;
         }
 
-        
 
+
+        /// <summary>Allow landlord to accept request for renting his property</summary>
         [HttpPost("AcceptRentRequest/{rentId}")]
         public async Task<IActionResult> AcceptRentRequest(int rentId)
         {
@@ -33,6 +34,8 @@ namespace RentMateAPI.Controllers
             return Ok();
         }
 
+
+        /// <summary>Allow landlord to reject request for renting his property</summary>
         [HttpPost("RejectRentRequest/{rentId}")]
         public async Task<IActionResult> RejectRentRequest(int rentId)
         {

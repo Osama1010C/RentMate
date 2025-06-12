@@ -16,6 +16,8 @@ namespace RentMateAPI.Controllers
         }
 
 
+
+        /// <summary>Return requested properties for rent for a specific landlord</summary>
         [HttpGet("Requests/{landlordId}")]
         [Authorize(Roles = "landlord")]
         public async Task<IActionResult> GetAllRentingRequests(int landlordId)
@@ -31,6 +33,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Return requested property for rent for a specific landlord</summary>
         [HttpGet("Requests/{landlordId}/{propertyId}")]
         [Authorize(Roles = "landlord")]
         public async Task<IActionResult> GetAllRentingRequestsForProperty(int landlordId, int propertyId)
@@ -46,6 +49,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Return all tenant's requests for renting properties</summary>
         [HttpGet("MyRentRequests/{tenantId}")]
         [Authorize(Roles = "tenant")]
         public async Task<IActionResult> GetAllTenantRentRequests(int tenantId)
@@ -61,6 +65,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Send rent request for a property</summary>
         [HttpPost]
         [Authorize(Roles = "tenant")]
         public async Task<IActionResult> RentProperty(int tenantId, int propertyId, IFormFile document)
@@ -85,6 +90,8 @@ namespace RentMateAPI.Controllers
             }
         }
 
+
+        /// <summary>Allow tenant to cancel his rent request</summary>
         [HttpDelete]
         [Authorize(Roles = "tenant")]
         public async Task<IActionResult> CancelRentRequestProperty(int tenantId, int propertyId)

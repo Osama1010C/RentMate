@@ -16,6 +16,7 @@ namespace RentMateAPI.Controllers
             this._searchService = searchService;
         }
 
+        /// <summary>Search for properties based on location and price range.</summary>
         [HttpGet]
         public async Task<IActionResult> GetAllProperties(string? location = null, decimal? fromPrice = null, decimal? toPrice = null)
         {

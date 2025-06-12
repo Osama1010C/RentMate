@@ -17,6 +17,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Return all saved posts for a specific tenant</summary>
         [HttpGet("Posts/{tenantId}")]
         public async Task<IActionResult> GetAllTenantSavedPosts(int tenantId)
         {
@@ -32,6 +33,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Save a post for a specific tenant</summary>
         [HttpPost]
         public async Task<IActionResult> SavePost(int tenantId, int propertyId)
         {

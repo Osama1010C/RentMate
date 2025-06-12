@@ -17,8 +17,9 @@ namespace RentMateAPI.Controllers
             this._messageService = messageService;
         }
 
+        /// <summary>Return all chats for a specific user</summary>
         [HttpGet("MyChats/{userId}")]
-        public async Task<IActionResult> GetAllTenantChats(int userId)
+        public async Task<IActionResult> GetAllUserChats(int userId)
         {
             try
             {
@@ -31,6 +32,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Return content of the chat between two users</summary>
         [HttpGet("Chatting")]
         public async Task<IActionResult> GetChatContent(int userId, int recieverId)
         {
@@ -45,6 +47,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Send a message from one user to another</summary>
         [HttpPost("SendMessage")]
         public async Task<IActionResult> AddMessage(int senderId, int recieverId, string message)
         {

@@ -15,6 +15,7 @@ namespace RentMateAPI.Controllers
             _notificationService = notificationService;
         }
 
+        /// <summary>Return all notifications for a specific user</summary>
         [HttpGet]
         public async Task<IActionResult> GetNotifications(int userId)
         {
@@ -29,6 +30,7 @@ namespace RentMateAPI.Controllers
             }
         }
 
+        /// <summary>Return number of unseen notifications for a specific user</summary>
         [HttpGet("NumberOfUnSeen")]
         public async Task<IActionResult> GetNumberOfUnSeenNotifications(int userId)
         {
@@ -43,6 +45,7 @@ namespace RentMateAPI.Controllers
             }
         }
 
+        /// <summary>Check if there is unseen notifications</summary>
         [HttpGet("CheckUnSeen")]
         public async Task<IActionResult> CheckUnseenNotifications(int userId)
         {
@@ -58,6 +61,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Mark specific notification as seen</summary>
         [HttpPost("MarkAsSeen")]
         public async Task<IActionResult> MarkAsSeen(int notificationId)
         {
@@ -73,6 +77,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Delete all notifications for a specific user</summary>
         [HttpDelete]
         public async Task<IActionResult> DeleteNotifications(int userId)
         {

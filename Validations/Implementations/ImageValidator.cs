@@ -6,7 +6,7 @@ namespace RentMateAPI.Validations.Implementations
 {
     public class ImageValidator : IImageValidator
     {
-        private static readonly List<string> AllowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+        private static readonly List<string> AllowedExtensions = new List<string> { ".jpg", ".jpeg", ".png", ".avif" };
         private static readonly long AllowedSize = 1 * 1024 * 1024; //1MB
 
         public bool IsNullImage(IFormFile image) 

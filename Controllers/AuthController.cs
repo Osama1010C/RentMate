@@ -25,12 +25,14 @@ namespace RentMateAPI.Controllers
         }
 
 
-        
+
+        /// <summary>Return all landlords registration requests to admin</summary>
         [HttpGet("LandlordsRequests")]
         public async Task<IActionResult> GetLandlordRegistrationRequests() => Ok(await _pendingLandlordService.GetAllAsync());
 
-     
 
+
+        /// <summary>Register new user , return token if user is tenant , return nothing of user is landlord and move him to pendings accounts</summary>
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] NewUserDto userDto, string role)
         {
@@ -77,6 +79,7 @@ namespace RentMateAPI.Controllers
 
 
 
+        /// <summary>Login user and return token</summary>
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody]UserLoginDto userDto)
         {
@@ -99,6 +102,7 @@ namespace RentMateAPI.Controllers
 
 
 
+        /// <summary>Refresh old token and return new token</summary>
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto model)
         {
@@ -113,8 +117,6 @@ namespace RentMateAPI.Controllers
             }
             catch (Exception ex)
             {
-                //HttpContext.Session.Clear();
-                //Response.Cookies.Delete(".AspNetCore.Session");
                 return Ok(new { message = "Token NOT Refreshed." });
             }
 
@@ -122,6 +124,8 @@ namespace RentMateAPI.Controllers
             return Ok(newAuthModel);
         }
 
+
+        /// <summary>Logout user and clear session</summary>
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {

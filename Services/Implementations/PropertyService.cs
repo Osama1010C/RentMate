@@ -62,7 +62,7 @@ namespace RentMateAPI.Services.Implementations
             return propertyDtos;
         }
 
-        public async Task<List<PropertyDto>> GetAllAsync(int pageNumber)
+        public async Task<List<PropertyDto>> GetPageAsync(int pageNumber)
         {
             var properties = await _unitOfWork.Properties.GetAllAsync(
                 skip: pageNumber < 1 ? 0 : PropertiesPerPage * (pageNumber - 1),

@@ -18,6 +18,7 @@ namespace RentMateAPI.Controllers
 
 
 
+        /// <summary>Return all comments for a specific property</summary>
         [HttpGet("{propertyId}")]
         public async Task<IActionResult> GetAllPropertyComments(int propertyId)
         {
@@ -32,8 +33,10 @@ namespace RentMateAPI.Controllers
             }
         }
 
-        
 
+
+
+        /// <summary>Add new comment for a specific property</summary>
         [HttpPost]
         public async Task<IActionResult> AddComment(NewCommentDto newComment)
         {

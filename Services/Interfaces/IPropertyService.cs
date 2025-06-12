@@ -7,7 +7,7 @@ namespace RentMateAPI.Services.Interfaces
     {
         Task<int> GetNumberOfPages();
         Task<List<PropertyDto>> GetAllAsync();
-        Task<List<PropertyDto>> GetAllAsync(int pageNumber);
+        Task<List<PropertyDto>> GetPageAsync(int pageNumber);
         Task<PropertyDetailsDto> GetDetailsAsync(int propertyId, int userId);
         Task<List<PropertyDto>> GetMyPropertiesAsync(int tenantId);
 

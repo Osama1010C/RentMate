@@ -17,19 +17,22 @@ namespace RentMateAPI.Controllers
         }
 
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllProperties() => Ok(await _propertyService.GetAllAsync());
+
+
+
+        /// <summary>Take page number as input and return paginated list of properties.</summary>
         [HttpGet]
-        public async Task<IActionResult> GetAllProperties() => Ok(await _propertyService.GetAllAsync());
+        public async Task<IActionResult> GetPagedProperties(int pageNumber) => Ok(await _propertyService.GetPageAsync(pageNumber));
 
 
-        [HttpGet("pagination")]
-        public async Task<IActionResult> GetAllProperties(int pageNumber) => Ok(await _propertyService.GetAllAsync(pageNumber));
-
-
+        /// <summary>Return number of pages calculated by number of all properties</summary>
         [HttpGet("NumberOfPages")]
         public async Task<IActionResult> GetNumberOfPages() => Ok(await _propertyService.GetNumberOfPages());
 
 
-
+        /// <summary>Take propertyId and userId then return this property and add 1 view of this user to property</summary>
         [HttpGet("{propertyId}")]
         public async Task<IActionResult> GetPropertyDetails(int propertyId, int userId)
         {
@@ -45,6 +48,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Return all properties that is rented succefully for a specific tenant</summary>
         [HttpGet("MyProperties/{tenantId}")]
         [Authorize(Roles = "tenant")]
         public async Task<IActionResult> GetMyProperties(int tenantId)
@@ -61,9 +65,9 @@ namespace RentMateAPI.Controllers
         }
 
 
-        
 
 
+        /// <summary>Let landlord to add new property</summary>
         [HttpPost("AddProperty")]
         [Authorize(Roles = "landlord")]
         public async Task<IActionResult> AddProperty([FromForm] AddPropertyDto propertyDto, [FromForm] PropertyImagesDto images)
@@ -79,6 +83,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>add secondary image for property</summary>
         [HttpPost("AddPropertyImage")]
         [Authorize(Roles = "landlord")]
         public async Task<IActionResult> AddPropertyImage(int propertyId, [FromForm] AddPropertyImageDto propertyImageDto)
@@ -95,7 +100,7 @@ namespace RentMateAPI.Controllers
         }
 
 
-
+        /// <summary>Update property</summary>
         [HttpPut("Update/{propertyId}")]
         [Authorize(Roles = "landlord")]
         public async Task<IActionResult> UpdateProperty(int propertyId, [FromForm]UpdatedPropertDto propertyDto, [FromForm]ImageDto? image = null)
@@ -112,6 +117,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Delete property</summary>
         [HttpDelete("Delete/{propertyId}")]
         [Authorize(Roles = "landlord")]
         public async Task<IActionResult> DeleteProperty(int propertyId)
@@ -127,6 +133,8 @@ namespace RentMateAPI.Controllers
             }
         }
 
+
+        /// <summary>Delete secondary property image</summary>
         [HttpDelete("DeletePropertyImage/{propertyImageId}")]
         [Authorize(Roles = "landlord")]
         public async Task<IActionResult> DeletePropertyImage(int propertyImageId)

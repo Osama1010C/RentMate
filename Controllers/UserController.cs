@@ -16,11 +16,15 @@ namespace RentMateAPI.Controllers
             this._userService = userService;
         }
 
+
+
+        /// <summary>Return all users in the system</summary>
         [HttpGet]
         [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> GetAllUsers() => Ok(await _userService.GetAllUsersAsync());
 
 
+        /// <summary>Return specific user</summary>
         [HttpGet("{id}")]
         [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> GetUser(int id)
@@ -38,6 +42,7 @@ namespace RentMateAPI.Controllers
 
 
 
+        /// <summary>Return some statistics about system</summary>
         [HttpGet("Statistics")]
         public async Task<IActionResult> GetStatistics()
         {
@@ -54,6 +59,7 @@ namespace RentMateAPI.Controllers
 
 
 
+        /// <summary>Return user image</summary>
         [HttpGet("{id}/image")]
         [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> GetUserImage(int id)
@@ -70,6 +76,7 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Let user to add image</summary>
         [HttpPost("image")]
         [Authorize(Roles = "admin,landlord,tenant")]
         public async Task<IActionResult> AddUserImage([FromForm]UserImageDto user)

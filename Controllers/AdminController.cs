@@ -16,11 +16,14 @@ namespace RentMateAPI.Controllers
         }
 
 
+        /// <summary>Return statistics of system</summary>
         [HttpGet("DashBoard")]
         public async Task<IActionResult> GetStatistics()
             => Ok(await _adminService.GetStatisticsAsync());
 
 
+
+        /// <summary>Allow admin to accept request of landlord to register in system</summary>
         [HttpPost("AcceptRegistration/{requestId}")]
         public async Task<IActionResult> AcceptLandlordRegistration(int requestId)
         {
@@ -38,6 +41,7 @@ namespace RentMateAPI.Controllers
 
 
 
+        /// <summary>Allow admin to accept request of landlord to add his property in system</summary>
         [HttpPost("AcceptPost/{propertyId}")]
         public async Task<IActionResult> AcceptPropertPost(int propertyId)
         {
@@ -55,6 +59,7 @@ namespace RentMateAPI.Controllers
 
 
 
+        /// <summary>Allow admin to reject request of landlord to register in system</summary>
         [HttpDelete("LandlordRequest/{requestId}")]
         public async Task<IActionResult> RejectLandlordRegistration(int requestId)
         {
@@ -71,7 +76,7 @@ namespace RentMateAPI.Controllers
         }
 
 
-
+        /// <summary>Allow admin to reject request of landlord to add his property in system</summary>
         [HttpDelete("RejectPost/{propertyId}")]
         public async Task<IActionResult> RejectPropertyPost(int propertyId)
         {
