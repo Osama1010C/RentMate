@@ -161,10 +161,12 @@ namespace RentMateAPI.Services.Implementations
             if (requests is null) return new List<PropertyRequestDto>();
 
             
-            var requestInfo = requests.Select(r =>
+            var requestInfoTasks = requests.Select(async r =>
             {
-                var landlordName = _unitOfWork.Users.GetByIdAsync(r.Property.LandlordId).Result!.Name;
-                var landlordImage = _unitOfWork.Users.GetByIdAsync(r.Property.LandlordId).Result!.Image;
+                var landlord = await _unitOfWork.Users.GetByIdAsync(r.Property.LandlordId);
+
+                var landlordName = landlord!.Name;
+                var landlordImage = landlord.Image;
                 return new PropertyRequestDto
                 {
                     PropertyId = r.Property.Id,
@@ -183,11 +185,12 @@ namespace RentMateAPI.Services.Implementations
                     Price = r.Property.Price,
                     Status = r.Property.Status,
                     Views = r.Property.Views,
-                    PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, r.Property.Id).Result,
+                    PropertyImages = await PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, r.Property.Id),
                     PropertyCreateAt = r.Property.CreateAt
                 };
             });
 
+            var requestInfo = await Task.WhenAll(requestInfoTasks);
             return requestInfo.ToList();
         }
 

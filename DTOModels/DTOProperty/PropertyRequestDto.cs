@@ -11,7 +11,7 @@
         public DateTime? RequestCreateAt { get; set; }
         public int? LandlordId { get; set; }
         public string LandlordName { get; set; } = null!;
-        public byte[] LandlordImage { get; set; } = null!;
+        public byte[]? LandlordImage { get; set; } = null!;
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string Location { get; set; } = null!;

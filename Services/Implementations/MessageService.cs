@@ -111,7 +111,7 @@ namespace RentMateAPI.Services.Implementations
                               includeProperties: "Sender,Receiver",
                               orderBy: m => m.OrderBy(m => m.SentAt));
 
-            
+
 
             var messages = chat.Select(c => new MessageDto
             {
@@ -171,17 +171,23 @@ namespace RentMateAPI.Services.Implementations
             foreach (var sender in senders)
             {
                 var chat = await _unitOfWork.Messages
-                              .GetAllAsync(m => (m.SenderId == userId || m.ReceiverId == userId) 
+                              .GetAllAsync(m => (m.SenderId == userId || m.ReceiverId == userId)
                               && (m.SenderId == sender.SenderId || m.ReceiverId == sender.SenderId));
-                if(chat.Any(c => c.Seen == 0))
+                if (chat.Any(c => c.Seen == 0))
                 {
                     sender.IsAnyUnseenMessages = true;
                     sender.NumberOfUnseenMessages = chat.Count(c => c.Seen == 0);
                 }
+                //sender.LastMessage = ShapeLargeMessgae(await GetLastMessage(sender.SenderId, userId));
+                var lastMessage = _dataProtector.Unprotect(await MessageHelper.GetLastMessage(_unitOfWork, sender.SenderId, userId));
+                sender.LastMessage = MessageHelper.ShapeLargeMessgae(lastMessage);
+
                 detailedSender.Add(sender);
             }
 
             return detailedSender;
         }
+
+        
     }
 }
