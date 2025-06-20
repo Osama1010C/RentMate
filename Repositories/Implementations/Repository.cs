@@ -62,6 +62,22 @@ namespace RentMateAPI.Repositories.Implementations
             return await query.ToListAsync();
         }
 
+        public async Task<List<T>> GetAllAsync(int skip, int take, string includeProperties = "", Expression<Func<T, bool>> filter = null)
+        {
+            IQueryable<T> query = _dbSet.AsNoTracking();
+            if (filter != null)
+                query = query.Where(filter);
+
+            query = query.Skip(skip).Take(take);
+
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                query = query.Include(includeProperty);
+
+
+
+            return await query.ToListAsync();
+        }
+
         public async Task<T> GetAsync(Expression<Func<T, bool>> filter = null,
                                  Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
                                  string includeProperties = "")
@@ -83,11 +99,6 @@ namespace RentMateAPI.Repositories.Implementations
         public async Task SaveChangesAsync() => await _db.SaveChangesAsync();
 
         public async Task<bool> IsExistAsync(int id) => await _dbSet.FindAsync(id) != null;
-
-
-        public async Task<List<T>> Skip(int NumberofSkips) => await _dbSet.Skip(NumberofSkips).ToListAsync();
-
-        public async Task<List<T>> Take(int NumberofTakes) => await _dbSet.Take(NumberofTakes).ToListAsync();
 
 
     }

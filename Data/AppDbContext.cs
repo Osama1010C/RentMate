@@ -41,6 +41,10 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server = DESKTOP-TI3609O\\SQLEXPRESS ; Database = RentMate ; Integrated Security = SSPI ; TrustServerCertificate = True");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Comment>(entity =>
@@ -82,7 +86,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Message>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Messages__3214EC07881E4D15");
+            entity.HasKey(e => e.Id).HasName("PK__Messages__3214EC0746A573BE");
 
             entity.Property(e => e.Content).HasColumnType("text");
             entity.Property(e => e.SentAt)
@@ -91,17 +95,17 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Receiver).WithMany(p => p.MessageReceivers)
                 .HasForeignKey(d => d.ReceiverId)
-                .HasConstraintName("FK__Messages__Receiv__6E01572D");
+                .HasConstraintName("FK__Messages__Receiv__3E1D39E1");
 
             entity.HasOne(d => d.Sender).WithMany(p => p.MessageSenders)
                 .HasForeignKey(d => d.SenderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Messages__Sender__6D0D32F4");
+                .HasConstraintName("FK__Messages__Sender__3D2915A8");
         });
 
         modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC070184E581");
+            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC07115277C3");
 
             entity.Property(e => e.ActionDate)
                 .HasDefaultValueSql("(getdate())")
@@ -112,7 +116,7 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Notificat__UserI__7A672E12");
+                .HasConstraintName("FK__Notificat__UserI__05D8E0BE");
         });
 
         modelBuilder.Entity<PendingLandlord>(entity =>

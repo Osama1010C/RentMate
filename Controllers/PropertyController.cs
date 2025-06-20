@@ -24,7 +24,7 @@ namespace RentMateAPI.Controllers
 
 
         /// <summary>Take page number as input and return paginated list of properties.</summary>
-        [HttpGet("Page")]
+        [HttpGet("Page/{pageNumber}")]
         public async Task<IActionResult> GetPagedProperties(int pageNumber) => Ok(await _propertyService.GetPageAsync(pageNumber));
 
 
@@ -33,8 +33,42 @@ namespace RentMateAPI.Controllers
         public async Task<IActionResult> GetNumberOfPages() => Ok(await _propertyService.GetNumberOfPages());
 
 
-        /// <summary>Take propertyId and userId then return this property and add 1 view of this user to property</summary>
-        [HttpGet("{propertyId}")]
+        /// <summary>Take page number as input and return paginated list of properties for a specific LandLord</summary>
+        [HttpGet("{landlordId}/Page/{pageNumber}")]
+        [Authorize(Roles = "landlord")]
+        public async Task<IActionResult> GetPagedPropertiesForLandlord(int landlordId, int pageNumber)
+        {
+            try
+            {
+                var properties = await _propertyService.GetLandlordPropertiesPageAsync(landlordId, pageNumber);
+                return Ok(properties);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
+
+        /// <summary>Return number of pages calculated by number of all properties for a specific LandLord</summary>
+        [HttpGet("{landlordId}/NumberOfPages")]
+        [Authorize(Roles = "landlord")]
+        public async Task<IActionResult> GetNumberOfPagesForLandlord(int landlordId)
+        {
+            try
+            {
+                return Ok(await _propertyService.GetNumberOfPagesForLandlord(landlordId));
+
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+            /// <summary>Take propertyId and userId then return this property and add 1 view of this user to property</summary>
+            [HttpGet("{propertyId}")]
         public async Task<IActionResult> GetPropertyDetails(int propertyId, int userId)
         {
             try

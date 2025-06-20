@@ -36,6 +36,12 @@ namespace RentMateAPI.Services.Implementations
             var numberOfPages = (int)Math.Ceiling((decimal)(properties.Count(p => p.Status == "available" && p.PropertyApproval == "accepted")) / PropertiesPerPage);
             return numberOfPages;
         }
+        public async Task<int> GetNumberOfPagesForLandlord(int landlordId)
+        {
+            var properties = await _unitOfWork.Properties.GetAllAsync(p => p.LandlordId == landlordId);
+            var numberOfPages = (int)Math.Ceiling((decimal)(properties.Count(p => p.Status == "available" && p.PropertyApproval == "accepted")) / PropertiesPerPage);
+            return numberOfPages;
+        }
 
         public async Task<List<PropertyDto>> GetAllAsync()
         {
@@ -68,6 +74,36 @@ namespace RentMateAPI.Services.Implementations
                 skip: pageNumber < 1 ? 0 : PropertiesPerPage * (pageNumber - 1),
                 take: PropertiesPerPage,
                 includeProperties: "Landlord");
+
+            var propertyDtos = properties.Select(property => new PropertyDto
+            {
+                Id = property.Id,
+                LandlordId = property.LandlordId,
+                LandlordName = property.Landlord!.Name,
+                LandlordImage = property.Landlord.Image,
+                Title = property.Title,
+                Description = property.Description,
+                Location = property.Location,
+                Price = property.Price,
+                Status = property.Status,
+                Views = property.Views,
+                MainImage = property.MainImage,
+                CreateAt = property.CreateAt,
+                PropertyImages = PropertyImageHelper.GetPropertyImagesAsync(_unitOfWork, property.Id).Result,
+                PropertyApproval = property.PropertyApproval
+            }).OrderByDescending(p => p.Views).ToList();
+
+            return propertyDtos;
+        }
+        public async Task<List<PropertyDto>> GetLandlordPropertiesPageAsync(int landlordId, int pageNumber)
+        {
+            await _userValidator.IsModelExist(landlordId);
+
+            var properties = await _unitOfWork.Properties.GetAllAsync(
+               filter: p => p.LandlordId == landlordId,
+               skip: pageNumber < 1 ? 0 : PropertiesPerPage * (pageNumber - 1),
+               take: PropertiesPerPage,
+               includeProperties: "Landlord");
 
             var propertyDtos = properties.Select(property => new PropertyDto
             {
@@ -304,6 +340,8 @@ namespace RentMateAPI.Services.Implementations
             _unitOfWork.PropertyImages.Delete(propertyImageId);
             await _unitOfWork.CompleteAsync();
         }
+
+        
 
         
     }

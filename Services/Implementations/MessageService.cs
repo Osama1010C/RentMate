@@ -121,12 +121,6 @@ namespace RentMateAPI.Services.Implementations
             })
             .ToList();
 
-            foreach (var message in chat)
-                message.Seen = 1;
-
-            await _unitOfWork.CompleteAsync();
-
-
             return messages;
         }
 
@@ -166,26 +160,26 @@ namespace RentMateAPI.Services.Implementations
                 .DistinctBy(c => c.SenderId)
                 .ToList();
 
-            var detailedSender = new List<SenderDto>();
+            //var detailedSender = new List<SenderDto>();
 
-            foreach (var sender in senders)
-            {
-                var chat = await _unitOfWork.Messages
-                              .GetAllAsync(m => (m.SenderId == userId || m.ReceiverId == userId)
-                              && (m.SenderId == sender.SenderId || m.ReceiverId == sender.SenderId));
-                if (chat.Any(c => c.Seen == 0))
-                {
-                    sender.IsAnyUnseenMessages = true;
-                    sender.NumberOfUnseenMessages = chat.Count(c => c.Seen == 0);
-                }
-                //sender.LastMessage = ShapeLargeMessgae(await GetLastMessage(sender.SenderId, userId));
-                var lastMessage = _dataProtector.Unprotect(await MessageHelper.GetLastMessage(_unitOfWork, sender.SenderId, userId));
-                sender.LastMessage = MessageHelper.ShapeLargeMessgae(lastMessage);
+            //foreach (var sender in senders)
+            //{
+            //    var chat = await _unitOfWork.Messages
+            //                  .GetAllAsync(m => (m.SenderId == userId || m.ReceiverId == userId)
+            //                  && (m.SenderId == sender.SenderId || m.ReceiverId == sender.SenderId));
+            //    if (chat.Any(c => c.Seen == 0))
+            //    {
+            //        sender.IsAnyUnseenMessages = true;
+            //        sender.NumberOfUnseenMessages = chat.Count(c => c.Seen == 0);
+            //    }
+            //    //sender.LastMessage = ShapeLargeMessgae(await GetLastMessage(sender.SenderId, userId));
+            //    var lastMessage = _dataProtector.Unprotect(await MessageHelper.GetLastMessage(_unitOfWork, sender.SenderId, userId));
+            //    sender.LastMessage = MessageHelper.ShapeLargeMessgae(lastMessage);
 
-                detailedSender.Add(sender);
-            }
+            //    detailedSender.Add(sender);
+            //}
 
-            return detailedSender;
+            return senders;
         }
 
         

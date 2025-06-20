@@ -20,13 +20,15 @@
         public async Task InvokeAsync(HttpContext context)
         {
             var stopwatch = Stopwatch.StartNew();
-
             await _next(context);
-
             stopwatch.Stop();
+
             var elapsedMs = stopwatch.ElapsedMilliseconds;
 
-            var logEntry = $"{DateTime.UtcNow:O} \n {context.Request.Method} {context.Request.Path} \n {elapsedMs} ms\n\n";
+            var egyptTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Egypt Standard Time");
+            var egyptTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, egyptTimeZone);
+
+            var logEntry = $"{egyptTime:yyyy-MM-dd hh:mm:ss tt} \n {context.Request.Method} {context.Request.Path} \n {elapsedMs} ms\n\n";
 
             await File.AppendAllTextAsync(_logFilePath, logEntry + Environment.NewLine);
 

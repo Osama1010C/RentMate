@@ -8,10 +8,10 @@
 
         public byte[]? SenderImage { get; set; }
 
-        public string LastMessage { get; set; } = null!;
+        //public string LastMessage { get; set; } = null!;
 
-        public bool IsAnyUnseenMessages { get; set; }
+        //public bool IsAnyUnseenMessages { get; set; }
 
-        public int NumberOfUnseenMessages { get; set; }
+        //public int NumberOfUnseenMessages { get; set; }
     }
 }

@@ -49,7 +49,7 @@ namespace RentMateAPI
             builder.Services.AddSignalR();
 
             builder.Services.AddDataProtection();
-
+            builder.Services.AddHttpClient();
             builder.Services.AddApplicationServices();
             builder.Services.AddHttpContextAccessor();
 

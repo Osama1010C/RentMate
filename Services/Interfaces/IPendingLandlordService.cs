@@ -1,11 +1,12 @@
 ﻿using RentMateAPI.Data.Models;
+using RentMateAPI.DTOModels.DTOUser;
 
 namespace RentMateAPI.Services.Interfaces
 {
     public interface IPendingLandlordService
     {
-        Task<List<PendingLandlord>> GetAllAsync();
+        Task<List<PendingLandlordsDto>> GetAllAsync();
 
-        Task<bool> AddAsync(PendingLandlord landlord);
+        Task<bool> AddAsync(NewUserDto landlord);
     }
 }
